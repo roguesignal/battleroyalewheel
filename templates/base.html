@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/static/img/favicon.ico">
+    <title>BATTLE ROYALE</title>
+    <script src="/static/js/jquery-2.1.4.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    {% block custom_head %}{% endblock %}
+  </head>
+  <body>
+      <div class="container">
+    {% block custom_body %}{% endblock %}
+      </div>
+    {% block body_js %}{% endblock %}
+    <script type="text/javascript">
+        $('.alert > .close').click(function() {
+            $('.alert').hide();
+        });
+        $(document).keyup(function(e) {
+            if (e.keyCode == 27) {
+                $('.alert').hide();
+            }
+        });
+    </script>
+  </body>
+</html>

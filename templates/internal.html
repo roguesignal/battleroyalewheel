@@ -1,0 +1,37 @@
+{% extends "base.html" -%}
+{% import "error_helper.html" as ehlp %}
+
+{%- block custom_head %}
+    <link href="/static/css/internal.css" rel="stylesheet">
+    <script src="/static/js/handle_required.js"></script>
+    {%- block internal_custom_head %}{% endblock -%}
+{% endblock -%}
+
+{%- block custom_body %}
+<div class="header clearfix">
+    <nav>
+        <ul class="nav nav-tabs pull-right" id="tabmenu">
+            <li role="presentation"><a href="/entry"><strong>ENTRY</a></strong></li>
+            <li role="presentation"><a href="/exit"><strong>EXIT</a></strong></li>
+            <li role="presentation"><a href="/spin"><strong>SPIN</a></strong></li>
+            <li role="presentation"><a href="/players"><strong>PLAYERS</a></strong></li>
+            <li role="presentation"><a href="/games"><strong>GAMES</strong></a></li> 
+        </ul>
+    </nav>
+    <h3 class="text-muted">BATTLE ROYALE</h3>
+</div>
+{%- block internal_custom_body %}{% endblock -%}
+{{ ehlp.flashes() }}
+{%- endblock -%}
+
+{%- block body_js -%}
+<script type="text/javascript">
+    function clearAlertFlashes() {
+        $('.alert-flash').hide();
+    }
+    $(document).ready(function() {
+        setTimeout(clearAlertFlashes, 3000)
+    });
+</script>
+{%- block internal_body_js %}{% endblock -%}
+{%- endblock -%}

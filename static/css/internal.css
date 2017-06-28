@@ -1,0 +1,256 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #ccc;
+}
+
+/* HEADER */
+
+.header {
+  padding-right: 15px;
+  padding-left: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+}
+
+.list-group p {
+  background-color:#5C5;
+  font-size: 150%;
+}
+
+@media screen and (min-width: 768px) {
+  .header {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  /* Space out the masthead */
+  .header {
+    margin-bottom: 30px;
+  }
+}
+
+/* main page elements */
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+h1.page-header {
+  margin-top: 0;
+  text-align: right;
+}
+
+/* sidebar for vuln edits */
+.sidebar {
+  display: none;
+}
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+/*    position: fixed; */
+/*    top: 51px; */
+    bottom: 0;
+    left: 0; 
+    z-index: 1000;
+    display: block;
+    padding: 0 20px; 
+    overflow-x: hidden;
+    overflow-y: auto; /* scrollable contents */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+
+.pager {
+  text-align: right;
+}
+
+/* forms for settings */
+.form-passwd {
+  max-width: 400px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-passwd .form-passwd-heading {
+  margin-bottom: 10px;
+}
+.form-passwd .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-passwd .form-control:focus {
+  z-index: 2;
+}
+.form-passwd input {
+  margin: 0 0 2px 0;
+}
+
+.form-passwd button {
+    margin: 10px 0 0 0;
+    float: right;
+}
+
+.form-auth {
+  max-width: 400px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-auth .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-auth .form-control:focus {
+  z-index: 2;
+}
+.form-auth input {
+  margin: 0 0 2px 0;
+}
+.form-auth button {
+    margin: 10px 0 0 0;
+    float: right;
+}
+
+.form-contact {
+  max-width: 600px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-contact .form-contact-heading {
+  margin-bottom: 10px;
+}
+.form-contact button {
+    margin: 10px 0 0 0;
+    float: right;
+}
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #ddd;
+    font-weight: bold;
+    opacity: 1;
+}
+
+
+label {
+    font-size: 135%;
+}
+
+label.warning {
+    color:#D22;
+}
+
+.vulnform h3 {
+    margin-bottom: 35px;
+}
+
+.addanother {
+    text-align:right;
+    margin-top:10px;
+    margin-bottom:20px;
+}
+
+.tooltip-inner { 
+    text-align:left;
+    width:350px;
+    max-width: 350px;
+    font-size:120%;
+}
+
+.alright {
+    text-align:right;
+}
+
+.alcenter {
+    text-align:center;
+}
+
+p.expsubhead {
+    text-align:right;
+    font-size:1.35em;
+}
+
+.alert {
+    display:none;
+    position:fixed;
+    z-index:2000;
+    top:130px;
+    width:80%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align:center;
+}
+
+form .error {
+    color: #aa3311;
+}
+
+/* circle buttons */
+/* from http://cssdeck.com/labs/bootstrap-font-awesome-circle-buttons */
+
+.btn-circle, .btn-circle-3d{
+  border-radius: 50% !important;
+}
+
+.btn-primary.btn-circle{
+  -webkit-box-shadow: 0px 0px 3px 1px #245580;
+  -moz-box-shadow:    0px 0px 3px 1px #245580;
+  box-shadow:         0px 0px 3px 1px #245580;
+}
+
+.btn-info.btn-circle{
+  -webkit-box-shadow: 0px 0px 3px 1px #28a4c9;
+  -moz-box-shadow:    0px 0px 3px 1px #28a4c9;
+  box-shadow:         0px 0px 3px 1px #28a4c9;
+}
+
+.btn-success.btn-circle{
+  -webkit-box-shadow: 0px 0px 3px 1px #3e8f3e;
+  -moz-box-shadow:    0px 0px 3px 1px #3e8f3e;
+  box-shadow:         0px 0px 3px 1px #3e8f3e;
+}
+
+.btn-danger.btn-circle{
+  -webkit-box-shadow: 0px 0px 3px 1px #b92c28;
+  -moz-box-shadow:    0px 0px 3px 1px #b92c28;
+  box-shadow:         0px 0px 3px 1px #b92c28;
+}
+
+.btn-warning.btn-circle{
+  -webkit-box-shadow: 0px 0px 3px 1px #e38d13;
+  -moz-box-shadow:    0px 0px 3px 1px #e38d13;
+  box-shadow:         0px 0px 3px 1px #e38d13;
+}
+
+.btn-default.btn-circle{
+  -webkit-box-shadow: 0px 0px 3px 1px #ccc;
+
