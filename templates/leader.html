@@ -1,0 +1,25 @@
+{% extends "base.html" -%}
+{% block custom_head %}
+    <script src="/static/js/socket.io.slim.js"></script>
+{% endblock %}
+{%- block custom_body %}
+    <div class="header clearfix">
+        <h1>BATTLE ROYALE LEADERBOARD</h1>
+    </div>
+    <div>
+        <p>socketio message: <b><span id="socketio-msg"></span></b></p>
+    </div>
+{% endblock %}
+{% block body_js %}
+    <script>
+        var socket = null;
+        $(document).ready(function() {
+            if (!socket) {
+                socket = io.connect(location.href);
+                socket.on('refresh', function(data) {
+                    $('#socketio-msg').text(data['message']);
+                });
+            } 
+        });
+    </script>
+{% endblock %}

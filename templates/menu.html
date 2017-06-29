@@ -1,12 +1,4 @@
 {% extends "base.html" -%}
-{% import "error_helper.html" as ehlp %}
-
-{%- block custom_head %}
-    <link href="/static/css/internal.css" rel="stylesheet">
-    <script src="/static/js/handle_required.js"></script>
-    {%- block internal_custom_head %}{% endblock -%}
-{% endblock -%}
-
 {%- block custom_body %}
 <div class="header clearfix">
     <nav>
@@ -20,8 +12,9 @@
     </nav>
     <h3 class="text-muted">BATTLE ROYALE</h3>
 </div>
-{%- block internal_custom_body %}{% endblock -%}
-{{ ehlp.flashes() }}
+    {%- block menu_custom_body %}{% endblock -%}
+    {{ ehlp.flashes() }}
+    {%- endblock -%}
 {%- endblock -%}
 
 {%- block body_js -%}

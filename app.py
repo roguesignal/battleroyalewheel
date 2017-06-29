@@ -37,26 +37,25 @@ from flask import url_for
 from flask_socketio import SocketIO
 from flask_socketio import emit
 socketio = SocketIO(app)
+thread = None
 
-@socketio.on('my event', namespace='/test')
-def test_message(message):
-    print('tm: ' + str(message))
-    emit('my response', {'data': message['data']})
+def background_thread():
+    count = 0
+    while True:
+        socketio.sleep(1)
+        count += 1
+        socketio.emit('refresh', {'message': 'test' + str(count)}, namespace='/leader')
 
-@socketio.on('my broadcast event', namespace='/test')
-def test_broadcast(message):
-    print('tb: ' + str(message))
-    emit('my response', {'data': message['data']}, broadcast=True)
-
-@socketio.on('connect', namespace='/test')
+@socketio.on('connect')
 def test_connect():
-    print('tc: CONNECTED')
-    emit('my response', {'data': 'Connected'})
+    global thread
+    if thread is None:
+        thread = socketio.start_background_task(target=background_thread)
+    emit('my_response', {'data': 'Connected', 'count': 0})
 
-@socketio.on('disconnect', namespace='/test')
+@socketio.on('disconnect')
 def test_disconnect():
-    print('td: DISCONNECTED')
-    print('Client disconnected')
+    print('client disconnected')
 
 ## web routes
 @app.route('/entry', methods=['GET','POST'])
@@ -74,7 +73,7 @@ def entry():
 
 @app.route('/leader', methods=['GET','POST'])
 def example():
-    return render_template('sessions.html')
+    return render_template('leader.html')
 
 import os
 
@@ -83,13 +82,7 @@ def session_access():
     if request.method == 'GET':
         return jsonify({
             'session': str(os.urandom(16)),
-            'user': 'anon'
         })
-    data = request.get_json()
-    if 'session' in data:
-        print('session!')
-    elif 'user' in data:
-        print('user! ' + str(data))
     return '', 204
 
 if __name__ == '__main__':
