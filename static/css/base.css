@@ -13,10 +13,15 @@ body {
   border-bottom: 1px solid #e5e5e5;
 }
 
-.header h3 {
+.nav li {
+    font-size: 150%;
+}
+
+.header h2 {
   margin-top: 0;
   margin-bottom: 0;
   line-height: 40px;
+  font-size: 200%;
 }
 
 .list-group p {
@@ -45,25 +50,6 @@ h1.page-header {
   text-align: right;
 }
 
-/* sidebar for vuln edits */
-.sidebar {
-  display: none;
-}
-.nav-sidebar {
-  margin-right: -21px; /* 20px padding + 1px border */
-  margin-left: -20px;
-}
-.nav-sidebar > li > a {
-  padding-right: 20px;
-  padding-left: 20px;
-}
-.nav-sidebar > .active > a,
-.nav-sidebar > .active > a:hover,
-.nav-sidebar > .active > a:focus {
-  color: #fff;
-  background-color: #428bca;
-}
-
 @media (min-width: 768px) {
   .sidebar {
 /*    position: fixed; */
@@ -85,15 +71,15 @@ h1.page-header {
 }
 
 /* forms for settings */
-.form-passwd {
+.form-newplayer {
   max-width: 400px;
   padding: 15px;
   margin: 0 auto;
 }
-.form-passwd .form-passwd-heading {
+.form-newplayer .form-newplayer-heading {
   margin-bottom: 10px;
 }
-.form-passwd .form-control {
+.form-newplayer .form-control {
   position: relative;
   height: auto;
   -webkit-box-sizing: border-box;
@@ -102,14 +88,14 @@ h1.page-header {
   padding: 10px;
   font-size: 16px;
 }
-.form-passwd .form-control:focus {
+.form-newplayer .form-control:focus {
   z-index: 2;
 }
-.form-passwd input {
+.form-newplayer input {
   margin: 0 0 2px 0;
 }
 
-.form-passwd button {
+.form-newplayer button {
     margin: 10px 0 0 0;
     float: right;
 }
@@ -165,16 +151,6 @@ label {
 
 label.warning {
     color:#D22;
-}
-
-.vulnform h3 {
-    margin-bottom: 35px;
-}
-
-.addanother {
-    text-align:right;
-    margin-top:10px;
-    margin-bottom:20px;
 }
 
 .tooltip-inner { 

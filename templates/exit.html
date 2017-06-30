@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-sm-6">
         <h3 class="alcenter text-warn">NEW PLAYER</h3>
-        <form class="form-horizontal" action="/newplayer" method="POST">
+        <form class="form-horizontal form-newplayer" action="/newplayer" method="POST">
         {{ nef.csrf_token }}
         {{ flp.render(nef.playername, label_width=5) }}
         {{ flp.render(nef.wristband, label_width=5) }}
@@ -19,7 +19,7 @@
     </div>
     <div class="col-sm-6">
         <h3 class="alcenter text-warn">RETURNING PLAYER</h3>
-        <form class="form-horizontal" action="/returnplayer" method="POST">
+        <form class="form-horizontal form-oldplayer" action="/returnplayer" method="POST">
         {{ ref.csrf_token }}
         {{ flp.render(ref.wristband, label_width=5) }}
         {{ flp.render(nef.collarid, label_width=5) }}

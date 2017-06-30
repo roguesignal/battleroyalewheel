@@ -1,0 +1,79 @@
+{% macro render(field) -%}
+    {%- set placeholder = kwargs.pop('placeholder', '') -%}
+    {%- set label_width = kwargs.pop('label_width', 0) -%}
+    {%- set has_warning = kwargs.pop('warn', 0) -%}
+    {%- set matrix = kwargs.pop('matrix', False) -%}
+    {%- do kwargs.update({'novalidate': ''}) -%}
+    <div class="{% if not matrix %}form-group {% endif %}has-feedback
+        {%- if not matrix %}
+            {%- if field.errors or field.flags.required %} has-error
+            {%- elif has_warning == 1 %} has-warning
+            {%- else %} has-success
+            {%- endif -%}
+        {%- endif -%}">
+        {%- if not matrix %}
+        <label for="{{ field.id }}" class="control-label {% if label_width > 0 %}col-sm-{{ label_width }} alright{% endif %}">
+            {{ kwargs.pop('label_text',False) or field.label.text }}
+            {%- if field.description %} <i class="glyphicon glyphicon-exclamation-sign" data-toggle="tooltip" data-placement="top" title="{{ field.description }}" style="vertical-align:super;font-size:70%;"></i>{% endif %}
+        </label>
+        {%- endif -%}
+        {% set class_ = kwargs.pop('class_', '') -%}
+        {% if field.flags.required -%}
+            {% do kwargs.update({'req': ''}) -%}
+        {% endif -%}
+        {% if label_width > 0 %}<div class="col-sm-{{ 12 - label_width }}">{% endif %}
+        {% if field.type == 'BooleanField' -%}
+            {%- if matrix -%}
+            <div class="checkbox" style="text-align:center;">
+            {%- else -%}
+            <div class="checkbox" style="text-align:left;">
+            {%- endif -%}
+                <label>
+                {{ field(class_=class_, **kwargs) }}
+                </label>
+            </div>
+        {% else -%}
+            {% set class_ = class_ + ' form-control' -%}
+            {{ field(class_=class_, id=field.name, placeholder=placeholder, **kwargs) }}
+            {%- if (field.errors or field.flags.required) and not matrix -%}
+            <span class="glyphicon glyphicon-asterisk form-control-feedback" aria-hidden="true"></span>
+            {%- elif has_warning and not matrix -%}
+            <span class="glyphicon glyphicon-alert form-control-feedback" aria-hidden="true"></span>
+            {%- endif -%}
+        {% endif -%}
+        {% if field.errors -%}
+            <p class="error help-block">{{ field.errors|join(', ') }}</p>
+        {% endif -%}
+        {% if label_width > 0 %}</div>{% endif %}
+    </div>
+{%- endmacro %}
+
+{% macro render_matrix(entry) -%}
+    <div class="form-group">
+        <div class="col-sm-6 alright">
+            {{ render(entry.entryName,matrix=True,readonly="") }}
+        </div>
+        <div class="col-sm-3">
+            {% if entry.testState.data == 'TV' %}
+                {{ render(entry.testState,matrix=True) }}
+            {% else %}
+                {{ render(entry.testState,matrix=True,disabled="true") }}
+            {% endif %}
+        </div>
+        <div class="col-sm-3">
+            {% if entry.reliability.data == "N/A" %}
+                {{ render(entry.reliability,matrix=True, readonly="", placeholder="N/A") }}
+            {% else %}
+                {{ render(entry.reliability,matrix=True, placeholder="100") }}
+            {% endif %}
+        </div>
+            {{ render(entry.platformName,matrix=True) }}
+            {{ render(entry.targetVer,matrix=True) }}
+    </div>
+{%- endmacro %}
+
+{% macro render_general_errors(form) -%}
+    {%- if form.errors['general'] -%}
+    <span class="help-block error"> {{ form.errors['general'] }} </span>
+    {%- endif -%}
+{%- endmacro %}
