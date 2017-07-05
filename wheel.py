@@ -21,7 +21,20 @@ def background_thread():
     while True:
         socketio.sleep(1)
         count += 1
-        socketio.emit('refresh', {'message': 'test' + str(count)}, namespace='/leader')
+        # socketio.emit('refresh', {'message': 'test' + str(count)}, namespace='/leader')
+        socketio.emit('refresh',
+            {
+                'message': 'test' + str(count),
+                'leader': {'name': 'h@x0r5'},
+                'toptimes': [ { 'name': 'bobross', 'time': '01h 55m 01s', 'dead': 'true'},
+                    { 'name': 'lightningpants', 'time': '01h 20m 11s', 'dead': 'true'},
+                    { 'name': 'h@xor5', 'time': '40m 31s', 'dead': 'false'},
+                    { 'name': 'frodobaggins', 'time': '12m 44s', 'dead': 'true'},
+                ],
+                'showwheel': 'placeholder',
+            },
+            namespace='/leader')
+
 
 @socketio.on('connect')
 def test_connect():
@@ -48,12 +61,29 @@ def entry():
 def newplayer():
     nef = NewEntryForm()
     if nef.validate_on_submit():
+        goingwell = True
         app.logger.info('new entry for: ' + nef.playername)
-        # add Player to db
+        try:
+            player = Player(nef.playername.data, nef.wristband.data)
+            db.session.add(player)
+            db.session.commit()
+        except Exception as e:
+            app.logger.error('newplayer failed: ' + str(e))
+            flash('FAILED NEW PLAYER ENTRY - DB IS HORKED')
+            goingwell = False
+        if goingwell:
+            try:
+                entry = Entry(nef.playername.data, nef.wristband.data)
+                db.session.add(p)
+                db.session.commit()
+            except Exception as e:
+                app.logger.error('entry creation failed: ' + str(e))
+                flash('FAILED NEW PLAYER ENTRY - DB IS HORKED')
+                goingwell = False
+        flash('NEW PLAYER ENTERED')
         # add Entry to db
         # associate Collar with Entry
         # db commit
-        flash('NEW PLAYER ENTERED')
     else:
         app.logger.warn('new entry failed for: ' + nef.playername)
         flash('FAILED TO ENTER NEW PLAYER')

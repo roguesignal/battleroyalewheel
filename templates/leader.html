@@ -6,18 +6,45 @@
     <div class="header clearfix">
         <h1>BATTLE ROYALE LEADERBOARD</h1>
     </div>
-    <div>
-        <p>socketio message: <b><span id="socketio-msg"></span></b></p>
+    <div class="row">
+        <div class="col col-sm-8 offset-sm-2">
+            <h3>CURRENT LEADER: <span id="socketio-leader"></span>[KATANA]</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-sm-12">
+            <h3>TOP PLAYER TIMES</h3>
+            <div id="socketio-toptimes"></div>
+        </div>
     </div>
 {% endblock %}
 {% block body_js %}
     <script>
+        function renderTopTimes(j) {
+            outstr = "";
+            $.each(j, function(i, v) {
+                outstr += '<div class="row"><div class="col-sm-4">';
+                outstr += v['name'];
+                outstr += '</div><div class="col-sm-4">';
+                outstr += v['time'];
+                outstr += '</div><div class="col-sm-4">';
+                if (v['dead'] == 'true') {
+                    outstr += '[SKULL]';
+                }
+                outstr += '</div></div>'
+            });
+            return outstr;
+        }
+
         var socket = null;
         $(document).ready(function() {
             if (!socket) {
                 socket = io.connect(location.href);
                 socket.on('refresh', function(data) {
                     $('#socketio-msg').text(data['message']);
+                    $('#socketio-leader').text(data['leader']['name']);
+                    $('#socketio-toptimes').html(renderTopTimes(data['toptimes']));
+                    // wheel
                 });
             } 
         });
