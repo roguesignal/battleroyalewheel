@@ -55,6 +55,7 @@ def test_disconnect():
 from forms import NewEntryForm
 from forms import ReturnEntryForm
 from forms import ExitForm
+from forms import NewGameForm
 
 ## web routes
 @app.route('/', methods=['GET'])
@@ -123,7 +124,7 @@ def entry():
 
 @app.route('/exit', methods=['GET', 'POST'])
 def exitplayer():
-    ef = ExitForm()
+    ef = ExitForm(request.form)
     if request.method == 'POST':
         if ef.validate_on_submit():
             try:
@@ -166,9 +167,37 @@ def players():
 
     return render_template('players.html', players=playersl)
 
-@app.route('/games', methods=['GET, POST'])
+@app.route('/games', methods=['GET', 'POST'])
 def games():
-    return render_template('games.html')
+    if request.method == 'POST':
+        ngf = NewGameForm(request.form)
+        if 'newgame' in request.form:
+            if ngf.validate_on_submit():
+                newgame = Game(ngf.name.data, ngf.num_players.data)
+                db.session.add(newgame)
+                db.session.commit()
+                ngf = NewGameForm({})
+            else:
+                flash('FAILED TO ADD NEW GAME')
+        else:
+            abort(400)
+    else:
+        ngf = NewGameForm({})
+
+    games = Game.query.all()
+    gamesl = []
+
+    for g in games:
+        gd = {}
+        gd['name'] = g.name
+        gd['players'] = g.num_players
+        gd['active'] = g.active
+        gamesl.append(gd)
+
+    # TODO: delete game
+    # TODO: toggle game activation
+
+    return render_template('games.html', games=gamesl, ngf=ngf)
 
 @app.route('/leader', methods=['GET','POST'])
 def example():
