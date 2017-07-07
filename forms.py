@@ -2,13 +2,8 @@ from app import app
 from flask_wtf import FlaskForm
 
 from wtforms import BooleanField
-from wtforms import FieldList
-from wtforms import FormField
-from wtforms import HiddenField
-from wtforms import PasswordField
-from wtforms import SelectField
+from wtforms import IntegerField
 from wtforms import StringField
-from wtforms import TextAreaField
 from wtforms import validators
 from wtforms import ValidationError
 
@@ -116,7 +111,25 @@ class ExitForm(FlaskForm):
 
 
 class NewGameForm(FlaskForm):
-    pass
+    name = StringField('Name',
+            validators=[validators.InputRequired()]
+    )
+    num_players = IntegerField('# Players',
+            validators=[validators.InputRequired()]
+    )
+
+    def validate(self):
+        valid = FlaskForm.validate(self)
+        if not valid:
+            return False
+
+        g = Game.query.filter(Game.name == self.name.data).first()
+        if g:
+            self.errors['general'] = 'game name ' + self.name.data + ' already in use'
+            valid = False
+
+        return valid
+
 
 class UpdateGameForm(FlaskForm):
     pass
