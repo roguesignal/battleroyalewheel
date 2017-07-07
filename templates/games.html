@@ -1,34 +1,76 @@
 {% extends "menu.html" %}
 {% import "form_helper.html" as flp %}
 {% block menu_custom_body %}
-<h3 class="alcenter text-danger">PLAYER ENTRY</h3>
+<h3 class="alcenter text-danger">GAMES</h3>
 <div class="row">
     <div class="col-sm-6">
-        <h3 class="alcenter text-warn">NEW PLAYER</h3>
-        <form class="form-horizontal form-newplayer" action="/newplayer" method="POST">
-        {{ nef.csrf_token }}
-        {{ flp.render(nef.playername, label_width=5) }}
-        {{ flp.render(nef.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">REGISTER</button>
+            <div class="col-sm-6"><h4>name</h4></div>
+            <div class="col-sm-2"><h4>players</h4></div>
+            <div class="col-sm-2"><h4>active</h4></div>
+            <div class="col-sm-2"><h4>delete</h4></div>
+        </div>
+        {% for g in games %}
+        <div class="row">
+            <div class="col-sm-6">
+                {{ g['name'] }}
+            </div>
+            <div class="col-sm-2">
+                {{ g['players'] }}
+            </div>
+            <div class="col-sm-2" style="text-align:center;">
+                <span id="game-disable-{{ g['id'] }}" class="glyphicon glyphicon-ok"
+                      style="color:#1E1;text-align:center;{% if not g['active'] %}display:none;{% endif %}"></span>
+                <span id="game-activate-{{ g['id'] }}" class="glyphicon glyphicon-ban-circle"
+                      style="color:red;{% if g['active'] %}display:none;{% endif %}"></span>
+            </div>
+            <div class="col-sm-2">
+                <span id="game-delete-{{ g['id']}}" class="glyphicon glyphicon-fire" style="color:red;"></span>
             </div>
         </div>
-        </form>
+        {% endfor %}
     </div>
     <div class="col-sm-6">
-        <h3 class="alcenter text-warn">RETURNING PLAYER</h3>
-        <form class="form-horizontal form-oldplayer" action="/returnplayer" method="POST">
-        {{ ref.csrf_token }}
-        {{ flp.render(ref.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
+        <h4 style="text-align:right;">new game</h4>
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">RETURN</button>
+            <form class="form-horizontal" action="/games" method="POST">
+            <div class="col-sm-10 col-sm-offset-2">
+                {{ ngf.csrf_token }}
+                {{ flp.render(ngf.name, label_width=4) }}
+                {{ flp.render(ngf.num_players, label_width=4) }}
+            </div>
+            <div class="col-sm-7 col-sm-offset-5">
+                <button class="btn btn-primary btn-block" type="submit" name="newgame">NEW GAME</button>
+            </div>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+                {{ flp.render_general_errors(ngf) }}
             </div>
         </div>
-        </form>
     </div>
 </div>
 {% endblock %}
+{%- block internal_body_js %}
+<script>
+    $(document).ready(function() {
+        $("span[id^=game-disable-]".click(function() {
+            var gameid = this.id.match(/\d+/);
+            $.post("/games/disable/" + gameid, function(data) {
+                $.each(data, function(i, v) {
+            // TODO: check for response
+            // TODO: make activate appear and disable disappear
+                }
+            }
+        }
+        $("span[id^=game-activate-]".click(function() {
+            var gameid = this.id.match(/\d+/);
+            $.post("/games/activate/" + gameid, function(data));
+            // TODO: check for response
+            // TODO: make disable appear and activate disappear
+        }
+        $("span[id^=game-delete-]".click(function() {
+        }
+    }
+{% endblock -%}
