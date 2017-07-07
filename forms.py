@@ -15,7 +15,6 @@ from wtforms import ValidationError
 from models import Player
 from models import Game
 from models import Entry
-from models import Collar
 
 #### helpers
 
@@ -45,24 +44,18 @@ class NewEntryForm(FlaskForm):
             return False
 
         if Player.player_exists(self.playername.data):
-            self.errors['general'] = 'player name already exists'
-            return False
+            self.errors['general'] = 'player name ' + str(self.playername.data) + ' already exists'
+            valid = False
 
         if Player.wristband_exists(self.wristband.data):
-            self.errors['general'] = 'wristband already exists'
-            return False
+            self.errors['general'] = 'wristband ' + str(self.wristband.data) + ' already exists'
+            valid = False
 
-        collar = Collar.query.filter(Collar.collar_id == self.collarid.data.strip()).first()
-        #### TODO: change this if we want collar ids created on the fly
-        if not collar:
-            self.errors['general'] = 'invalid collar id'
-            return False
-        else:
-            if collar.entry.active:
-                self.errors['general'] = 'collar is already in use'
-                return False
+        if Entry.collar_active(self.collarid.data):
+            self.errors['general'] = 'collar ' + str(self.collarid.data) + ' already in use'
+            valid = False
 
-        return True
+        return valid
 
 
 class ReturnEntryForm(FlaskForm):
@@ -73,13 +66,54 @@ class ReturnEntryForm(FlaskForm):
             validators=[validators.InputRequired()]
     )
 
-    ## VALIDATION
-    # wristband must exist in database
-    # collarid must be unused
+    def validate(self):
+        valid = FlaskForm.validate(self)
+        if not valid:
+            return False
+
+        if not Player.wristband_exists(self.wristband.data):
+            self.errors['general'] = 'wristband ' + str(self.wristband.data) + ' does not exist'
+            valid = False
+
+        if Player.wristband_active(self.wristband.data):
+            self.errors['general'] = 'wristband ' + str(self.wristband.data) + ' already in game'
+            valid = False
+
+        if Entry.collar_active(self.collarid.data):
+            self.errors['general'] = 'collar ' + str(self.collarid.data) + ' already in use'
+            valid = False
+
+        return valid
 
 
 class ExitForm(FlaskForm):
-    pass
+    wristband = StringField('Wristband #',
+            validators=[validators.InputRequired()]
+    )
+    collarid = StringField('Collar ID',
+            validators=[validators.InputRequired()]
+    )
+
+    def validate(self):
+        valid = FlaskForm.validate(self)
+        if not valid:
+            return False
+
+        p = Player.query.filter(Player.wristband == self.wristband.data).first()
+        if not p:
+            self.errors['general'] = 'no player with this wristband: ' + self.wristband.data
+            valid = False
+
+        if not Entry.collar_active(self.collarid.data):
+            self.errors['general'] = 'collar ' + self.collarid.data + ' not associated with an active entry'
+            valid = False
+
+        if p.name != Entry.collar_player(self.collarid.data):
+            self.errors['general'] = 'collar ' + self.collarid.data + ' does not match player with wristband ' + self.wristband.data
+            valid = False
+
+        return valid
+
 
 class NewGameForm(FlaskForm):
     pass

@@ -10,6 +10,11 @@ from flask import url_for
 
 from app import app
 
+from models import db
+from models import Player
+from models import Entry
+from models import Game
+
 ## websockets
 from flask_socketio import SocketIO
 from flask_socketio import emit
@@ -21,7 +26,7 @@ def background_thread():
     while True:
         socketio.sleep(1)
         count += 1
-        # socketio.emit('refresh', {'message': 'test' + str(count)}, namespace='/leader')
+        # TODO: pull in live data here
         socketio.emit('refresh',
             {
                 'message': 'test' + str(count),
@@ -49,68 +54,117 @@ def test_disconnect():
 
 from forms import NewEntryForm
 from forms import ReturnEntryForm
+from forms import ExitForm
 
 ## web routes
-@app.route('/entry', methods=['GET'])
+@app.route('/', methods=['GET'])
+def index():
+    return redirect('/entry')
+
+@app.route('/entry', methods=['GET','POST'])
 def entry():
-    nef = NewEntryForm()
-    ref = ReturnEntryForm()
+    nef = NewEntryForm({})     # clear so we can have two forms with the same fieldnames here
+    ref = ReturnEntryForm({})  # ""
+    if request.method == 'POST':
+        goingwell = True
+        if 'register' in request.form:
+            nef = NewEntryForm(request.form)
+            if nef.validate_on_submit(): # validation checks for name + wristband uniqueness
+                app.logger.info('creating new entry for: ' + nef.playername.data)
+                try:
+                    player = Player(nef.playername.data, nef.wristband.data)
+                except Exception as e:
+                    app.logger.error('newplayer failed: ' + str(e))
+                    flash('FAILED NEW PLAYER PLAYER CREATE')
+                    goingwell = False
+                if goingwell:
+                    try:
+                        # create a new entry
+                        entry = Entry(player, nef.collarid.data, active=True)
+                    except Exception as e:
+                        app.logger.error('entry creation failed: ' + str(e))
+                        flash('FAILED NEW PLAYER ENTRY CREATE')
+                        goingwell = False
+                if goingwell:
+                    try:
+                        db.session.add(player)
+                        db.session.add(entry)
+                        db.session.commit()
+                        flash('NEW PLAYER ' + nef.playername.data + ' ENTERED')
+                    except Exception as e:
+                        app.logger.error('db commit failed: ' + str(e))
+                        flash('DATABASE IS HORKED')
+            else:
+                # did not validate, show errors
+                app.logger.info('new entry form errors: ' + str(nef.errors))
+                app.logger.warn('new entry failed for: ' + nef.playername.data)
+                flash('FAILED TO ENTER NEW PLAYER')
+        elif 'return' in request.form:
+            ref = ReturnEntryForm(request.form)
+            if ref.validate_on_submit(): # validation checks to make sure wristband exists, etc
+                player = Player.query.filter(Player.wristband == ref.wristband.data).one_or_none()
+                if player:
+                    try:
+                        entry = Entry(player, ref.collarid.data, active=True)
+                        db.session.add(entry)
+                        db.session.commit()
+                    except Exception as e:
+                        app.logger.error('entry creation failed: ' + str(e))
+                        flash('SOMETHING HORKED WITH ENTRY CREATION')
+                        goingwell = False
+                else: 
+                    flash('NO PLAYER WITH THAT WRISTBAND: ' + ref.wristband.data)
+                    goingwell = False
+            else:
+                flash('PLAYER RETURN FAILED')
+        else:
+            abort(400)
     return render_template('entry.html', nef=nef, ref=ref)
 
-@app.route('/newplayer', methods=['POST'])
-def newplayer():
-    nef = NewEntryForm()
-    if nef.validate_on_submit():
-        goingwell = True
-        app.logger.info('new entry for: ' + nef.playername)
-        try:
-            player = Player(nef.playername.data, nef.wristband.data)
-            db.session.add(player)
-            db.session.commit()
-        except Exception as e:
-            app.logger.error('newplayer failed: ' + str(e))
-            flash('FAILED NEW PLAYER ENTRY - DB IS HORKED')
-            goingwell = False
-        if goingwell:
-            try:
-                entry = Entry(nef.playername.data, nef.wristband.data)
-                db.session.add(p)
-                db.session.commit()
-            except Exception as e:
-                app.logger.error('entry creation failed: ' + str(e))
-                flash('FAILED NEW PLAYER ENTRY - DB IS HORKED')
-                goingwell = False
-        flash('NEW PLAYER ENTERED')
-        # add Entry to db
-        # associate Collar with Entry
-        # db commit
-    else:
-        app.logger.warn('new entry failed for: ' + nef.playername)
-        flash('FAILED TO ENTER NEW PLAYER')
-    return redirect('/entry')
-
-@app.route('/returnplayer', methods=['POST'])
-def returnplayer():
-    ref = ReturnEntryForm()
-    if ref.validate_on_submit():
-        app.logger.info('return entry for: ' + ref.playername)
-        flash('RETURNING PLAYER ENTERED')
-    else:
-        app.logger.warn('returning entry failed for: ' + ref.playername)
-        flash('FAILED TO ENTER RETURNING PLAYER')
-    return redirect('/entry')
-
-@app.route('/exit', methods=['GET, POST'])
+@app.route('/exit', methods=['GET', 'POST'])
 def exitplayer():
-    return render_template('exit.html')
+    ef = ExitForm()
+    if request.method == 'POST':
+        if ef.validate_on_submit():
+            try:
+                app.logger.info('exiting wristband ' + ef.wristband.data)
+                p = Player.player_wristband(ef.wristband.data)
+                entry = p.active_entry()
+                entry.active = False
+                entry.exit_time = db.func.now()
+                p.num_exits += 1
+                # TODO: update total player time played
+                db.session.commit()
+                flash('EXIT SUCCESSFUL')
+            except Exception as e:
+                flash('SOMETHING HORKED ON EXIT')
+                app.logger.error('error on exit: ' + str(e))
+        else:
+            app.logger.error(ef)
+            flash('INVALID EXIT SUBMISSION')
+
+    return render_template('exit.html', ef=ef)
 
 @app.route('/spin', methods=['GET, POST'])
 def spinthewheel():
+    # update grace_time
+    # update num_plays
     return render_template('spin.html')
 
-@app.route('/players', methods=['GET, POST'])
+@app.route('/players', methods=['GET'])
 def players():
-    return render_template('players.html')
+    players = Player.query.all()
+    playersl = []
+
+    for p in players:
+        pd = {}
+        pd['name'] = p.name
+        pd['wrist'] = p.wristband
+        active_entry = p.active_entry()
+        pd['collar'] = active_entry.collar if active_entry else 'DEAD'
+        playersl.append(pd)
+
+    return render_template('players.html', players=playersl)
 
 @app.route('/games', methods=['GET, POST'])
 def games():

@@ -1,34 +1,26 @@
 {% extends "menu.html" %}
 {% import "form_helper.html" as flp %}
 {% block menu_custom_body %}
-<h3 class="alcenter text-danger">PLAYER ENTRY</h3>
+<h3 class="alcenter text-danger">PLAYERS</h3>
 <div class="row">
-    <div class="col-sm-6">
-        <h3 class="alcenter text-warn">NEW PLAYER</h3>
-        <form class="form-horizontal form-newplayer" action="/newplayer" method="POST">
-        {{ nef.csrf_token }}
-        {{ flp.render(nef.playername, label_width=5) }}
-        {{ flp.render(nef.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
+    <div class="col-sm-10 col-sm-offset-1">
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">REGISTER</button>
+            <div class="col-sm-4"><h4>name</h4></div>
+            <div class="col-sm-4"><h4>wristband</h4></div>
+            <div class="col-sm-4"><h4>collar</h4></div>
+        </div>
+        {% for p in players %}
+        <div class="row">
+            <div class="col-sm-4">
+                {{ p['name'] }}
+            </div><div class="col-sm-4">
+                {{ p['wrist'] }}
+            </div><div class="col-sm-4">
+                {{ p['collar'] }}
             </div>
         </div>
-        </form>
-    </div>
-    <div class="col-sm-6">
-        <h3 class="alcenter text-warn">RETURNING PLAYER</h3>
-        <form class="form-horizontal form-oldplayer" action="/returnplayer" method="POST">
-        {{ ref.csrf_token }}
-        {{ flp.render(ref.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">RETURN</button>
-            </div>
-        </div>
-        </form>
+        {% endfor %}
+        <!-- edit? delete? update? -->
     </div>
 </div>
 {% endblock %}

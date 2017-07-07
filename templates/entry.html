@@ -5,27 +5,29 @@
 <div class="row">
     <div class="col-sm-6">
         <h3 class="alcenter text-warn">NEW PLAYER</h3>
-        <form class="form-horizontal" action="/newplayer" method="POST">
+        <form class="form-horizontal" action="/entry" method="POST">
         {{ nef.csrf_token }}
         {{ flp.render(nef.playername, label_width=5) }}
         {{ flp.render(nef.wristband, label_width=5) }}
         {{ flp.render(nef.collarid, label_width=5) }}
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">REGISTER</button>
+            <div class="col-sm-7 col-sm-offset-5">
+                {{ flp.render_general_errors(nef) }}
+                <button class="btn btn-lg btn-primary btn-block" name="register" type="submit">REGISTER</button>
             </div>
         </div>
         </form>
     </div>
     <div class="col-sm-6">
         <h3 class="alcenter text-warn">RETURNING PLAYER</h3>
-        <form class="form-horizontal" action="/returnplayer" method="POST">
+        <form class="form-horizontal" action="/entry" method="POST">
         {{ ref.csrf_token }}
         {{ flp.render(ref.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
+        {{ flp.render(ref.collarid, label_width=5) }}
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">RETURN</button>
+            <div class="col-sm-7 col-sm-offset-5">
+                {{ flp.render_general_errors(ref) }}
+                <button class="btn btn-lg btn-primary btn-block" name="return" type="submit">RETURN</button>
             </div>
         </div>
         </form>
