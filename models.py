@@ -102,3 +102,9 @@ class Game(Base):
     num_players = db.Column(db.Integer())
     active = db.Column(db.Boolean)
 
+    def __init__(self, name, num_players):
+        self.name = name
+        self.num_players = int(num_players)
+        self.active = False
+
+
