@@ -130,11 +130,3 @@ class NewGameForm(FlaskForm):
 
         return valid
 
-
-class UpdateGameForm(FlaskForm):
-    pass
-
-class UpdatePlayerForm(FlaskForm):
-    pass
-
-
