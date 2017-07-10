@@ -189,18 +189,39 @@ def games():
 
     for g in games:
         gd = {}
+        gd['id'] = g.id
         gd['name'] = g.name
         gd['players'] = g.num_players
         gd['active'] = g.active
         gamesl.append(gd)
 
-    # TODO: delete game
-    # TODO: toggle game activation
+    gamesl = sorted(gamesl, key=lambda k: k['name'])
 
     return render_template('games.html', games=gamesl, ngf=ngf)
 
+@app.route('/disablegame/<id>', methods=['GET'])
+def disablegame(id):
+    game = Game.query.filter(Game.id == id).one_or_none()
+    game.active = False
+    db.session.commit()
+    return redirect('/games')
+
+@app.route('/activategame/<id>', methods=['GET'])
+def activategame(id):
+    game = Game.query.filter(Game.id == id).one_or_none()
+    game.active = True
+    db.session.commit()
+    return redirect('/games')
+
+@app.route('/deletegame/<id>', methods=['GET'])
+def deletegame(id):
+    game = Game.query.filter(Game.id == id).one_or_none()
+    db.session.delete(game)
+    db.session.commit()
+    return redirect('/games')
+
 @app.route('/leader', methods=['GET','POST'])
-def example():
+def example(id):
     return render_template('leader.html')
 
 import os

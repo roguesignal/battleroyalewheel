@@ -19,13 +19,19 @@
                 {{ g['players'] }}
             </div>
             <div class="col-sm-2" style="text-align:center;">
-                <span id="game-disable-{{ g['id'] }}" class="glyphicon glyphicon-ok"
-                      style="color:#1E1;text-align:center;{% if not g['active'] %}display:none;{% endif %}"></span>
-                <span id="game-activate-{{ g['id'] }}" class="glyphicon glyphicon-ban-circle"
-                      style="color:red;{% if g['active'] %}display:none;{% endif %}"></span>
+                <a href="/disablegame/{{ g['id'] }}" target="_blank">
+                    <span id="game-disable-{{ g['id'] }}" class="glyphicon glyphicon-ok"
+                          style="color:#1E1;text-align:center;{% if not g['active'] %}display:none;{% endif %}"></span>
+                </a>
+                <a href="/activategame/{{ g['id'] }}" target="_blank">
+                    <span id="game-activate-{{ g['id'] }}" class="glyphicon glyphicon-ban-circle"
+                          style="color:red;{% if g['active'] %}display:none;{% endif %}"></span>
+                </a>
             </div>
             <div class="col-sm-2">
-                <span id="game-delete-{{ g['id']}}" class="glyphicon glyphicon-fire" style="color:red;"></span>
+                <a href="/deletegame/{{ g['id'] }}" target="_blank">
+                    <span id="game-delete-{{ g['id']}}" class="glyphicon glyphicon-fire" style="color:red;"></span>
+                </a>
             </div>
         </div>
         {% endfor %}
