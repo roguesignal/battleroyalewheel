@@ -183,18 +183,21 @@ def spin():
         spinthewheel()
 
     spins = Spin.query.order_by('id').all()
+    history = []
     if spins:
-        most_recent_spin = spins[-1]
-        game = most_recent_spin.game_name
-        collars = []
-        for ent in most_recent_spin.entries.split(','):
-            e = Entry.query.filter(Entry.id == ent).one_or_none()
-            collars.append(e.collar)
-    else:
-        game = 'none'
-        collars = ['N/A']
+        spins = spins[:-1]
+        for s in spins:
+            hist = {}
+            hist['game'] = s.game_name
+            entries = [ Entry.query.filter(Entry.id == ent).one_or_none() for ent in s.entries.split(',') ] 
+            hist['collars'] = [ e.collar for e in entries ]
+            hist['timestamp'] = s.created_on
+            history.append(hist)
 
-    return render_template('spin.html', game=game, collars=collars)
+    else:
+        history = [{'game': 'none', 'collars': ['N/A']}]
+
+    return render_template('spin.html', history=history)
 
 from datetime import datetime
 
