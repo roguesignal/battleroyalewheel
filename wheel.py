@@ -16,9 +16,6 @@ from models import Entry
 from models import Game
 from models import Spin
 
-## TODO: player elapsed time
-## TODO: report grace time to admin
-
 ## helper functions
 
 import random
@@ -37,7 +34,7 @@ def spinthewheel():
     entry_ids = ""
     for e in entries:
         entry_ids += str(e.id) + ','
-    entry_ids = entry_ids [:-1]
+    entry_ids = entry_ids[:-1]
     spin = Spin(game_name, entry_ids)
     db.session.add(spin)
     db.session.commit()
@@ -184,19 +181,18 @@ def spin():
 
     spins = Spin.query.order_by('id').all()
     history = []
-    if spins:
-        spins = spins[:-1]
-        for s in spins:
-            hist = {}
-            hist['game'] = s.game_name
-            entries = [ Entry.query.filter(Entry.id == ent).one_or_none() for ent in s.entries.split(',') ] 
-            hist['collars'] = [ e.collar for e in entries ]
-            hist['timestamp'] = s.created_on
-            history.append(hist)
+    for s in spins:
+        hist = {}
+        hist['game'] = s.game_name
+        entries = [ Entry.query.filter(Entry.id == ent).one_or_none() for ent in s.entries.split(',') ] 
+        hist['collars'] = [ e.collar for e in entries ]
+        hist['timestamp'] = s.created_on
+        history.append(hist)
 
-    else:
-        history = [{'game': 'none', 'collars': ['N/A']}]
+    if not spins:
+        history.append({'game': 'none', 'collars': ['N/A']})
 
+    history = history[::-1]
     return render_template('spin.html', history=history)
 
 from datetime import datetime
