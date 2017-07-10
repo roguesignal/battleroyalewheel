@@ -3,24 +3,28 @@
 {% block menu_custom_body %}
 <h3 class="alcenter text-danger">PLAYERS</h3>
 <div class="row">
-    <div class="col-sm-10 col-sm-offset-1">
-        <div class="row">
-            <div class="col-sm-4"><h4>name</h4></div>
-            <div class="col-sm-4"><h4>wristband</h4></div>
-            <div class="col-sm-4"><h4>collar</h4></div>
-        </div>
-        {% for p in players %}
-        <div class="row">
-            <div class="col-sm-4">
-                {{ p['name'] }}
-            </div><div class="col-sm-4">
-                {{ p['wrist'] }}
-            </div><div class="col-sm-4">
-                {{ p['collar'] }}
-            </div>
-        </div>
-        {% endfor %}
-        <!-- edit? delete? update? -->
+    <div class="col-sm-3"><h4>name</h4></div>
+    <div class="col-sm-3"><h4>wristband</h4></div>
+    <div class="col-sm-3"><h4>collar</h4></div>
+    <div class="col-sm-3" style="text-align:right;"><h4>grace until</h4></div>
+</div>
+{% for p in players %}
+<div class="row">
+    <div class="col-sm-3">
+        {{ p['name'] }}
+    </div><div class="col-sm-3">
+        {{ p['wrist'] }}
+    </div><div class="col-sm-3">
+        {{ p['collar'] }}
+    </div><div class="col-sm-3" style="text-align:right;">
+        {{ p['grace'] }}
+    </div>
+</div>
+{% endfor %}
+<hr>
+<div class="row">
+    <div class="col-sm-4 col-sm-offset-8" style="text-align:right;">
+        <b>now:</b> {{ now }}
     </div>
 </div>
 {% endblock %}
