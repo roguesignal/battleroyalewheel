@@ -4,14 +4,27 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import AbstractConcreteBase
 from sqlalchemy.dialects.postgresql import JSON
 
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import DateTime
+
+from datetime import datetime
+
+class utcnow(expression.FunctionElement):
+    type = DateTime()
+
+@compiles(utcnow, 'postgresql')
+def pg_utcnow(element, compiler, **kw):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
+
 db = SQLAlchemy()
 
 class Base(db.Model, AbstractConcreteBase):
     __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True)
-    created_on = db.Column(db.DateTime, default=db.func.now())
-    updated_on = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    created_on = db.Column(db.DateTime, default=utcnow())
+    updated_on = db.Column(db.DateTime, default=utcnow(), onupdate=utcnow())
 
 
 class Player(Base):
@@ -77,7 +90,17 @@ class Entry(Base):
         self.player_name = player.name
         self.collar = collar
         self.active = active
-        self.grace_until = db.func.now()
+        self.grace_until = utcnow() + timedelta(minutes=5)
+
+    @classmethod
+    def available_entries(cls):
+        """ return all active Entries that are out of grace period """
+        active_entries = Entry.query.filter(Entry.active == True)
+        victims = []
+        for ae in active_entries:
+            if ae.grace_until < datetime.utcnow():
+                victims.append(ae)
+        return victims
 
     @classmethod
     def collar_active(cls, collar):
@@ -106,5 +129,16 @@ class Game(Base):
         self.name = name
         self.num_players = int(num_players)
         self.active = False
+
+class Spin(Base):
+    """ A game name and a string listing entry ids """
+    __tablename__ = 'spin'
+
+    game_name = db.Column(db.String())
+    entries = db.Column(db.String())
+
+    def __init__(self, game_name, entries):
+        self.game_name = game_name
+        self.entries = entries
 
 
