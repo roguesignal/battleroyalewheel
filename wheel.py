@@ -40,7 +40,7 @@ def spinthewheel():
     entry_ids = entry_ids [:-1]
     spin = Spin(game_name, entry_ids)
     db.session.add(spin)
-    db.session.commit
+    db.session.commit()
     # TODO: update grace_time
     # TODO: update num_plays
     # TODO: error catching
