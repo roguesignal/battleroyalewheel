@@ -19,17 +19,17 @@
                 {{ g['players'] }}
             </div>
             <div class="col-sm-2" style="text-align:center;">
-                <a href="/disablegame/{{ g['id'] }}" target="_blank">
+                <a href="/disablegame/{{ g['id'] }}">
                     <span id="game-disable-{{ g['id'] }}" class="glyphicon glyphicon-ok"
                           style="color:#1E1;text-align:center;{% if not g['active'] %}display:none;{% endif %}"></span>
                 </a>
-                <a href="/activategame/{{ g['id'] }}" target="_blank">
+                <a href="/activategame/{{ g['id'] }}">
                     <span id="game-activate-{{ g['id'] }}" class="glyphicon glyphicon-ban-circle"
                           style="color:red;{% if g['active'] %}display:none;{% endif %}"></span>
                 </a>
             </div>
             <div class="col-sm-2">
-                <a href="/deletegame/{{ g['id'] }}" target="_blank">
+                <a href="/deletegame/{{ g['id'] }}">
                     <span id="game-delete-{{ g['id']}}" class="glyphicon glyphicon-fire" style="color:red;"></span>
                 </a>
             </div>
