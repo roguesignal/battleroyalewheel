@@ -92,6 +92,10 @@ class Entry(Base):
         self.active = active
         self.grace_until = utcnow() + timedelta(minutes=5)
 
+    def add_grace_minutes(self, minutes):
+        self.grace_until = utcnow() + timedelta(minutes=minutes)
+        db.session.commit()
+
     @classmethod
     def available_entries(cls):
         """ return all active Entries that are out of grace period """

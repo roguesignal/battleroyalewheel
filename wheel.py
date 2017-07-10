@@ -28,19 +28,21 @@ def spinthewheel():
     for g in all_games:
         if g.num_players <= len(available_entries):
             possible_games.append(g)
+    if len(possible_games) < 1:
+        return False
     game = random.choice(possible_games)
     game_name = game.name
     entries = random.sample(available_entries, game.num_players)
     entry_ids = ""
     for e in entries:
+        e.add_grace_minutes(5)
         entry_ids += str(e.id) + ','
     entry_ids = entry_ids[:-1]
     spin = Spin(game_name, entry_ids)
     db.session.add(spin)
     db.session.commit()
-    # TODO: update grace_time
-    # TODO: update num_plays
-    # TODO: error catching
+    # TODO: update num_plays?
+    # TODO: error catching?
     return True
 
 ## websockets
@@ -52,12 +54,17 @@ thread = None
 def background_thread():
     count = 0
     while True:
-        socketio.sleep(1)
-        count += 1
-        # TODO: pull in live data here
+        socketio.sleep(5)
+
+        # iterate through all players
+        #   add up times of all player entries
+        #   if an entry is active, count up current time
+
+        # send the most recent Spin as well as its creation timestamp
+        # send current timestamp
+
         socketio.emit('refresh',
             {
-                'message': 'test' + str(count),
                 'leader': {'name': 'h@x0r5'},
                 'toptimes': [ { 'name': 'bobross', 'time': '01h 55m 01s', 'dead': 'true'},
                     { 'name': 'lightningpants', 'time': '01h 20m 11s', 'dead': 'true'},
@@ -176,8 +183,9 @@ def exitplayer():
 
 @app.route('/spin', methods=['GET', 'POST'])
 def spin():
+    spinerror = False
     if request.method == 'POST':
-        spinthewheel()
+        spinerror = not spinthewheel()
 
     spins = Spin.query.order_by('id').all()
     history = []
@@ -193,7 +201,7 @@ def spin():
         history.append({'game': 'none', 'collars': ['N/A']})
 
     history = history[::-1]
-    return render_template('spin.html', history=history)
+    return render_template('spin.html', history=history, spinerror=spinerror)
 
 from datetime import datetime
 
@@ -208,10 +216,12 @@ def players():
         pd['wrist'] = p.wristband
         active_entry = p.active_entry()
         pd['collar'] = active_entry.collar if active_entry else 'DEAD'
-        pd['grace'] = active_entry.grace_until if active_entry else '----'
+        pd['grace'] = active_entry.grace_until if active_entry and active_entry.grace_until > datetime.utcnow() else '----'
+        if active_entry:
+            print(active_entry.grace_until)
         playersl.append(pd)
-        now = datetime.utcnow()
 
+    now = datetime.utcnow()
     return render_template('players.html', players=playersl, now=now)
 
 @app.route('/games', methods=['GET', 'POST'])
