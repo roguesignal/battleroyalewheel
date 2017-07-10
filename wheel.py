@@ -14,6 +14,37 @@ from models import db
 from models import Player
 from models import Entry
 from models import Game
+from models import Spin
+
+## TODO: player elapsed time
+## TODO: report grace time to admin
+
+## helper functions
+
+import random
+
+def spinthewheel():
+    """ spin the wheel and add result to database """
+    all_games = Game.query.filter(Game.active == True).all()
+    available_entries = Entry.available_entries()
+    possible_games = []
+    for g in all_games:
+        if g.num_players <= len(available_entries):
+            possible_games.append(g)
+    game = random.choice(possible_games)
+    game_name = game.name
+    entries = random.sample(available_entries, game.num_players)
+    entry_ids = ""
+    for e in entries:
+        entry_ids += str(e.id) + ','
+    entry_ids = entry_ids [:-1]
+    spin = Spin(game_name, entry_ids)
+    db.session.add(spin)
+    db.session.commit
+    # TODO: update grace_time
+    # TODO: update num_plays
+    # TODO: error catching
+    return True
 
 ## websockets
 from flask_socketio import SocketIO
@@ -146,11 +177,26 @@ def exitplayer():
 
     return render_template('exit.html', ef=ef)
 
-@app.route('/spin', methods=['GET, POST'])
-def spinthewheel():
-    # update grace_time
-    # update num_plays
-    return render_template('spin.html')
+@app.route('/spin', methods=['GET', 'POST'])
+def spin():
+    if request.method == 'POST':
+        spinthewheel()
+
+    spins = Spin.query.order_by('id').all()
+    if spins:
+        most_recent_spin = spins[-1]
+        game = most_recent_spin.game_name
+        collars = []
+        for ent in most_recent_spin.entries.split(','):
+            e = Entry.query.filter(Entry.id == ent).one_or_none()
+            collars.append(e.collar)
+    else:
+        game = 'none'
+        collars = ['N/A']
+
+    return render_template('spin.html', game=game, collars=collars)
+
+from datetime import datetime
 
 @app.route('/players', methods=['GET'])
 def players():
@@ -163,9 +209,11 @@ def players():
         pd['wrist'] = p.wristband
         active_entry = p.active_entry()
         pd['collar'] = active_entry.collar if active_entry else 'DEAD'
+        pd['grace'] = active_entry.grace_until if active_entry else '----'
         playersl.append(pd)
+        now = datetime.utcnow()
 
-    return render_template('players.html', players=playersl)
+    return render_template('players.html', players=playersl, now=now)
 
 @app.route('/games', methods=['GET', 'POST'])
 def games():
@@ -220,7 +268,7 @@ def deletegame(id):
     db.session.commit()
     return redirect('/games')
 
-@app.route('/leader', methods=['GET','POST'])
+@app.route('/leader', methods=['GET'])
 def example(id):
     return render_template('leader.html')
 

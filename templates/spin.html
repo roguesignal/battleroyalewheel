@@ -1,34 +1,34 @@
 {% extends "menu.html" %}
 {% import "form_helper.html" as flp %}
 {% block menu_custom_body %}
-<h3 class="alcenter text-danger">PLAYER ENTRY</h3>
+<h3 class="alcenter text-danger">SPIN THE WHEEL</h3>
+<br><br><br>
 <div class="row">
-    <div class="col-sm-6">
-        <h3 class="alcenter text-warn">NEW PLAYER</h3>
-        <form class="form-horizontal form-newplayer" action="/newplayer" method="POST">
-        {{ nef.csrf_token }}
-        {{ flp.render(nef.playername, label_width=5) }}
-        {{ flp.render(nef.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">REGISTER</button>
-            </div>
-        </div>
+    <div class="col-sm-6 col-sm-offset-3">
+        <form action="/spin" method="POST">
+            <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">SPIN</button>
         </form>
     </div>
-    <div class="col-sm-6">
-        <h3 class="alcenter text-warn">RETURNING PLAYER</h3>
-        <form class="form-horizontal form-oldplayer" action="/returnplayer" method="POST">
-        {{ ref.csrf_token }}
-        {{ flp.render(ref.wristband, label_width=5) }}
-        {{ flp.render(nef.collarid, label_width=5) }}
+</div>
+<br>
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <h3>latest game: {{ game }}</h3>
+        <h3>collars</h4>
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-5">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">RETURN</button>
+            {% for c in collars %}
+            <div class="col-sm-2" style="font-size:200%;">
+                {{ c }}
             </div>
+            {% endfor %}
         </div>
-        </form>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3" style="text-align:center;">
+        <a href="/leader" target="_blank">pop out the leaderboard</a>
     </div>
 </div>
 {% endblock %}
