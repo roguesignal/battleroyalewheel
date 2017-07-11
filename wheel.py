@@ -19,6 +19,15 @@ from models import Spin
 ## helper functions
 
 import random
+from datetime import datetime
+from datetime import timedelta
+
+def hhmmss(sec):
+    m, s = divmod(sec, 60)
+    h, m = divmod(m, 60)
+    if h > 0:
+        return "%dh %02dm %02ds" % (h, m, s)
+    return "%2dm %02ds" % (m, s)
 
 def spinthewheel():
     """ spin the wheel and add result to database """
@@ -52,29 +61,57 @@ socketio = SocketIO(app)
 thread = None
 
 def background_thread():
-    count = 0
+    # import the app context
+    ctx = app.test_request_context()
+    ctx.push()
     while True:
-        socketio.sleep(5)
+        socketio.sleep(1)
 
-        # iterate through all players
-        #   add up times of all player entries
-        #   if an entry is active, count up current time
+        toptimes = []
+        players = Player.query.all()
+        for p in players:
+            dead = 'true'
+            entries = Entry.query.filter(Entry.player_name == p.name).all()
+            elapsed_time = timedelta(0)
+            for e in entries:
+                if e.active:
+                    dead = 'false'
+                    elapsed_time += (datetime.utcnow() - e.created_on)
+                else:
+                    elapsed_time += (e.exit_time - e.created_on) # bad timezones
+            toptimes.append({'name': p.name, 'time': elapsed_time, 'dead': dead})
+        
+        # order toptimes by elapsed_time
+        toptimes = sorted(toptimes, key=lambda k: k['time'], reverse=True)
+        toptimes = [{'name': t['name'], 'time': hhmmss(t['time'].seconds), 'dead': t['dead']} for t in toptimes]
 
+        # leader is top time elapsed + still alive
+        leader = 'nobody'
+        for tt in toptimes:
+            if tt['dead'] == 'false':
+                leader = tt['name']
+                break
+        
         # send the most recent Spin as well as its creation timestamp
         # send current timestamp
-
         socketio.emit('refresh',
             {
-                'leader': {'name': 'h@x0r5'},
-                'toptimes': [ { 'name': 'bobross', 'time': '01h 55m 01s', 'dead': 'true'},
-                    { 'name': 'lightningpants', 'time': '01h 20m 11s', 'dead': 'true'},
-                    { 'name': 'h@xor5', 'time': '40m 31s', 'dead': 'false'},
-                    { 'name': 'frodobaggins', 'time': '12m 44s', 'dead': 'true'},
-                ],
+                'leader': {'name': leader},
+                'toptimes': toptimes,
                 'showwheel': 'placeholder',
             },
             namespace='/leader')
-
+        #socketio.emit('refresh',
+        #    {
+        #        'leader': {'name': 'h@x0r5'},
+        #        'toptimes': [ { 'name': 'bobross', 'time': '01h 55m 01s', 'dead': 'true'},
+        #            { 'name': 'lightningpants', 'time': '01h 20m 11s', 'dead': 'true'},
+        #            { 'name': 'h@xor5', 'time': '40m 31s', 'dead': 'false'},
+        #            { 'name': 'frodobaggins', 'time': '12m 44s', 'dead': 'true'},
+        #        ],
+        #        'showwheel': 'placeholder',
+        #    },
+        #    namespace='/leader')
 
 @socketio.on('connect')
 def test_connect():
@@ -127,13 +164,13 @@ def entry():
                         db.session.add(entry)
                         db.session.commit()
                         flash('NEW PLAYER ' + nef.playername.data + ' ENTERED')
+                        nef = NewEntryForm({})
                     except Exception as e:
                         app.logger.error('db commit failed: ' + str(e))
                         flash('DATABASE IS HORKED')
             else:
                 # did not validate, show errors
-                app.logger.info('new entry form errors: ' + str(nef.errors))
-                app.logger.warn('new entry failed for: ' + nef.playername.data)
+                app.logger.debug('new entry form errors: ' + str(nef.errors))
                 flash('FAILED TO ENTER NEW PLAYER')
         elif 'return' in request.form:
             ref = ReturnEntryForm(request.form)
@@ -144,6 +181,8 @@ def entry():
                         entry = Entry(player, ref.collarid.data, active=True)
                         db.session.add(entry)
                         db.session.commit()
+                        flash('RETURNING PLAYER ' + ref.playername.data + ' ENTERED')
+                        ref = ReturnEntryForm({})
                     except Exception as e:
                         app.logger.error('entry creation failed: ' + str(e))
                         flash('SOMETHING HORKED WITH ENTRY CREATION')
@@ -165,11 +204,9 @@ def exitplayer():
             try:
                 app.logger.info('exiting wristband ' + ef.wristband.data)
                 p = Player.player_wristband(ef.wristband.data)
-                entry = p.active_entry()
-                entry.active = False
-                entry.exit_time = db.func.now()
                 p.num_exits += 1
-                # TODO: update total player time played
+                entry = p.active_entry()
+                entry.exit_player()
                 db.session.commit()
                 flash('EXIT SUCCESSFUL')
             except Exception as e:
@@ -203,8 +240,6 @@ def spin():
     history = history[::-1]
     return render_template('spin.html', history=history, spinerror=spinerror)
 
-from datetime import datetime
-
 @app.route('/players', methods=['GET'])
 def players():
     players = Player.query.all()
@@ -217,8 +252,6 @@ def players():
         active_entry = p.active_entry()
         pd['collar'] = active_entry.collar if active_entry else 'DEAD'
         pd['grace'] = active_entry.grace_until if active_entry and active_entry.grace_until > datetime.utcnow() else '----'
-        if active_entry:
-            print(active_entry.grace_until)
         playersl.append(pd)
 
     now = datetime.utcnow()
@@ -278,7 +311,7 @@ def deletegame(id):
     return redirect('/games')
 
 @app.route('/leader', methods=['GET'])
-def example(id):
+def leaderboard():
     return render_template('leader.html')
 
 import os
