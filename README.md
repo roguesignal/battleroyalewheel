@@ -5,10 +5,13 @@ royale with wheel
 
 ### install postgres and set up database
 
-get the binary [here](https://www.postgresql.org/download/macosx/)
+get the postgres binary [here](https://www.postgresql.org/download/macosx/)
 
     > psql
     > create database brw;
+    > ^D
+
+(ctrl-d should have quit you out of psql)
 
 ### homebrew, python3, git
     > /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
