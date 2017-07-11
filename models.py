@@ -120,10 +120,17 @@ class Entry(Base):
         return False
 
     @classmethod
-    def collar_playername(cls, collar):
+    def active_collar_playername(cls, collar):
         e = Entry.query.filter(Entry.collar == collar, Entry.active == True).first() 
         if e:
             return e.player_name
+        return False
+
+    @classmethod
+    def latest_collar_playername(cls, collar):
+        ents = Entry.query.filter(Entry.collar == collar, Entry.active == True).order_by('id')
+        if ents:
+            return ents[-1].player_name
         return False
 
 
@@ -159,7 +166,7 @@ class Spin(Base):
 
     def spin_players(self):
         collars = self.spin_collars()
-        players = [ Entry.collar_playername(c) for c in collars ]
+        players = [ Entry.latest_collar_playername(c) for c in collars ]
         return players
 
     def recent_spin(self):

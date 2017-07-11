@@ -220,7 +220,7 @@ def exitplayer():
                     p = Player.player_wristband(ef.wristband.data)
                 else:
                     app.logger.info('exiting collar ' + ef.collarid.data)
-                    pname = Entry.collar_playername(ef.collarid.data)
+                    pname = Entry.active_collar_playername(ef.collarid.data)
                     p = Player.query.filter(Player.name == pname).one_or_none()
                 p.num_exits += 1
                 entry = p.active_entry()
