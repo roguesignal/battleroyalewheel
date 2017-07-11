@@ -82,30 +82,34 @@ class ReturnEntryForm(FlaskForm):
 
 
 class ExitForm(FlaskForm):
-    wristband = StringField('Wristband #',
-            validators=[validators.InputRequired()]
-    )
-    collarid = StringField('Collar ID',
-            validators=[validators.InputRequired()]
-    )
+    wristband = StringField('Wristband #')
+    collarid = StringField('Collar ID')
 
     def validate(self):
         valid = FlaskForm.validate(self)
         if not valid:
             return False
 
-        p = Player.query.filter(Player.wristband == self.wristband.data).first()
-        if not p:
-            self.errors['general'] = 'no player with this wristband: ' + self.wristband.data
-            valid = False
+        self.errors['general'] = []
 
-        if not Entry.collar_active(self.collarid.data):
-            self.errors['general'] = 'collar ' + self.collarid.data + ' not associated with an active entry'
-            valid = False
+        if (not self.collarid.data or self.collarid.data == "") and (not self.wristband.data or self.wristband.data == ""):
+               self.errors['general'].append('please enter either a collarid or a wristband') 
+               valid = False
 
-        if p.name != Entry.collar_playername(self.collarid.data):
-            self.errors['general'] = 'collar ' + self.collarid.data + ' does not match player with wristband ' + self.wristband.data
-            valid = False
+        if self.wristband.data and self.wristband.data != "":
+            p = Player.query.filter(Player.wristband == self.wristband.data).first()
+            if not p:
+                self.errors['general'].append('no player with this wristband: ' + self.wristband.data)
+                valid = False
+
+        if self.collarid.data and self.collarid.data != "":
+            if not Entry.collar_active(self.collarid.data):
+                self.errors['general'].append('collar ' + self.collarid.data + ' not associated with an active entry')
+                valid = False
+
+            if p.name != Entry.collar_playername(self.collarid.data):
+                self.errors['general'].append('collar ' + self.collarid.data + ' does not match player with wristband ' + self.wristband.data)
+                valid = False
 
         return valid
 
