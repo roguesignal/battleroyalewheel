@@ -12,11 +12,18 @@
 <div class="row">
     <div class="col-sm-3">
         {{ p['name'] }}
-    </div><div class="col-sm-3">
+    </div>
+    <div class="col-sm-3">
         {{ p['wrist'] }}
-    </div><div class="col-sm-3">
-        {{ p['collar'] }}
-    </div><div class="col-sm-3" style="text-align:right;">
+    </div>
+    <div class="col-sm-3">
+        {% if p['collar'] == 'DEAD' %}
+            <strike>DEAD</strike>
+        {% else %}
+            {{ p['collar'] }}
+        {% endif %}
+    </div>
+    <div class="col-sm-3" style="text-align:right;">
         {{ p['grace'] }}
     </div>
 </div>

@@ -1,15 +1,17 @@
 {% macro flashes() -%}
     {%- with msgs = get_flashed_messages() -%}
         {%- if msgs -%}
-<div class="alert alert-info alert-flash" role="alert" style="display:block">
+        <hr>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2" style="text-align:center;font-size:175%">
             {%- for msg in msgs %}
-    {{ msg }}{% if not loop.last %}<br>{% endif %}
+                <span class="label label-warning">
+                    {{ msg }}
+                </span>
+                {% if not loop.last %}<br>{% endif %}
             {%- endfor %}
-    <button type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
+            </div>
+        </div>
         {%- endif %}
     {% endwith -%}
 {%- endmacro %}
