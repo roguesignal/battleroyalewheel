@@ -8,7 +8,7 @@
     </div>
     <div class="row">
         <div class="col col-sm-8 offset-sm-2">
-            <h3>CURRENT LEADER: <span id="socketio-leader"></span>[KATANA]</h3>
+            <h3>CURRENT LEADER: <span id="socketio-leader"></span> <img src="/static/img/katana.png" style="width:50px;"></h3>
         </div>
     </div>
     <div class="row">
@@ -23,14 +23,14 @@
         function renderTopTimes(j) {
             outstr = "";
             $.each(j, function(i, v) {
-                outstr += '<div class="row"><div class="col-sm-4">';
-                outstr += v['name'];
-                outstr += '</div><div class="col-sm-4">';
-                outstr += v['time'];
-                outstr += '</div><div class="col-sm-4">';
+                outstr += '<div class="row"><div class="col-sm-1">';
                 if (v['dead'] == 'true') {
-                    outstr += '[SKULL]';
+                    outstr += '<img src="/static/img/skull.svg" style="width:25px;">';
                 }
+                outstr += '</div><div class="col-sm-3">';
+                outstr += v['name'];
+                outstr += '</div><div class="col-sm-2">';
+                outstr += v['time'];
                 outstr += '</div></div>'
             });
             return outstr;
