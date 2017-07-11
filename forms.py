@@ -92,9 +92,10 @@ class ExitForm(FlaskForm):
 
         self.errors['general'] = []
 
+        # one field is filled in
         if (not self.collarid.data or self.collarid.data == "") and (not self.wristband.data or self.wristband.data == ""):
                self.errors['general'].append('please enter either a collarid or a wristband') 
-               valid = False
+               return False
 
         if self.wristband.data and self.wristband.data != "":
             p = Player.query.filter(Player.wristband == self.wristband.data).first()
@@ -107,6 +108,7 @@ class ExitForm(FlaskForm):
                 self.errors['general'].append('collar ' + self.collarid.data + ' not associated with an active entry')
                 valid = False
 
+        if self.wristband.data and self.wristband.data != "" and self.collarid.data and self.collarid.data != "":
             if p.name != Entry.collar_playername(self.collarid.data):
                 self.errors['general'].append('collar ' + self.collarid.data + ' does not match player with wristband ' + self.wristband.data)
                 valid = False

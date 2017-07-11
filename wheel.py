@@ -215,8 +215,13 @@ def exitplayer():
     if request.method == 'POST':
         if ef.validate_on_submit():
             try:
-                app.logger.info('exiting wristband ' + ef.wristband.data)
-                p = Player.player_wristband(ef.wristband.data)
+                if ef.wristband.data and ef.wristband.data != "":
+                    app.logger.info('exiting wristband ' + ef.wristband.data)
+                    p = Player.player_wristband(ef.wristband.data)
+                else:
+                    app.logger.info('exiting collar ' + ef.collarid.data)
+                    pname = Entry.collar_playername(ef.collarid.data)
+                    p = Player.query.filter(Player.name == pname).one_or_none()
                 p.num_exits += 1
                 entry = p.active_entry()
                 entry.exit_player()
