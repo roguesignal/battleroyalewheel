@@ -65,9 +65,10 @@ class Player(Base):
     @classmethod
     def wristband_active(cls, wristband):
         p = Player.query.filter(Player.wristband == wristband).first()
-        e = Entry.query.filter(Entry.player_name == p.name, Entry.active == True).first()
-        if e:
-            return True
+        if p:
+            e = Entry.query.filter(Entry.player_name == p.name, Entry.active == True).first()
+            if e:
+                return True
         return False
 
     @classmethod
@@ -82,7 +83,7 @@ class Entry(Base):
     exit_time = db.Column(db.DateTime())
     grace_until = db.Column(db.DateTime())
     num_plays = db.Column(db.Integer)
-    active = db.Column(db.Boolean)
+    active = db.Column(db.Boolean)   # TODO: redundant with exit_time
     collar = db.Column(db.String())
 
     def __init__(self, player, collar, active=False):
@@ -94,6 +95,11 @@ class Entry(Base):
 
     def add_grace_minutes(self, minutes):
         self.grace_until = utcnow() + timedelta(minutes=minutes)
+        db.session.commit()
+
+    def exit_player(self):
+        self.active = False
+        self.exit_time = utcnow()
         db.session.commit()
 
     @classmethod
@@ -133,6 +139,7 @@ class Game(Base):
         self.name = name
         self.num_players = int(num_players)
         self.active = False
+
 
 class Spin(Base):
     """ A game name and a string listing entry ids """
