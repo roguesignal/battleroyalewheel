@@ -3,20 +3,38 @@
     <script src="/static/js/socket.io.slim.js"></script>
 {% endblock %}
 {%- block custom_body %}
+<div id="leaderboard">
     <div class="header clearfix">
         <h1>BATTLE ROYALE LEADERBOARD</h1>
     </div>
     <div class="row">
-        <div class="col col-sm-8 offset-sm-2">
-            <h3>CURRENT LEADER: <span id="socketio-leader"></span> <img src="/static/img/katana.png" style="width:50px;"></h3>
+        <div class="col-sm-8 col-sm-offset-2" style="text-align:center;">
+            <h3>CURRENT LEADER</h3>
+            <span id="socketio-leader" style="text-align:center;font-size:150%"></span>
+            <img src="/static/img/katana.png" style="width:50px;">
         </div>
     </div>
     <div class="row">
-        <div class="col col-sm-12">
+        <div class="col-sm-12">
             <h3>TOP PLAYER TIMES</h3>
             <div id="socketio-toptimes"></div>
         </div>
     </div>
+</div>
+<div id="wheel" style="display:none;">
+    <div class="header clearfix">
+        <h1>SPIN THE WHEEL</h1>
+    </div>
+    <div class="row">
+        <div class="col col-sm-10 col-sm-offset-1" style="text-align:center;">
+            [INSERT WHEEL HERE]
+            <br>
+            <h2>GAME<h2>
+            <h3 id="socketio-game"></h3>
+            <h4 id="socketio-players"></h4>
+        </div>
+    </div>
+</div>
 {% endblock %}
 {% block body_js %}
     <script>
@@ -41,10 +59,17 @@
             if (!socket) {
                 socket = io.connect(location.href);
                 socket.on('refresh', function(data) {
-                    $('#socketio-msg').text(data['message']);
                     $('#socketio-leader').text(data['leader']['name']);
                     $('#socketio-toptimes').html(renderTopTimes(data['toptimes']));
-                    // wheel
+                    $('#socketio-game').text(data['spin']['game']);
+                    $('#socketio-players').text(data['spin']['players']);
+                    if (data['spin']['recent'] == 'true') {
+                        $('#wheel').toggle(true);
+                        $('#leaderboard').toggle(false);
+                    } else {
+                        $('#wheel').toggle(false);
+                        $('#leaderboard').toggle(true);
+                    }
                 });
             } 
         });

@@ -92,13 +92,25 @@ def background_thread():
                 leader = tt['name']
                 break
         
-        # send the most recent Spin as well as its creation timestamp
-        # send current timestamp
+        spins = Spin.query.order_by('id').all()
+        if len(spins) > 0:
+            latest_spin = spins[-1]
+            game_name = latest_spin.game_name
+            spin_players = " | ".join(latest_spin.spin_players())
+            if latest_spin.recent_spin():
+                recent_spin = 'true'
+            else:
+                recent_spin = 'false'
+        else:
+            game_name = 'WAIT FOR IT'
+            spin_players = ''
+
         socketio.emit('refresh',
             {
                 'leader': {'name': leader},
                 'toptimes': toptimes,
                 'showwheel': 'placeholder',
+                'spin': {'game': game_name, 'players': spin_players, 'recent': recent_spin},
             },
             namespace='/leader')
         #socketio.emit('refresh',
@@ -181,7 +193,8 @@ def entry():
                         entry = Entry(player, ref.collarid.data, active=True)
                         db.session.add(entry)
                         db.session.commit()
-                        flash('RETURNING PLAYER ' + ref.playername.data + ' ENTERED')
+                        playername = Player.player_wristband(ref.wristband.data)
+                        flash('RETURNING PLAYER ' + playername + ' ENTERED')
                         ref = ReturnEntryForm({})
                     except Exception as e:
                         app.logger.error('entry creation failed: ' + str(e))

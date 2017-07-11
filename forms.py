@@ -103,7 +103,7 @@ class ExitForm(FlaskForm):
             self.errors['general'] = 'collar ' + self.collarid.data + ' not associated with an active entry'
             valid = False
 
-        if p.name != Entry.collar_player(self.collarid.data):
+        if p.name != Entry.collar_playername(self.collarid.data):
             self.errors['general'] = 'collar ' + self.collarid.data + ' does not match player with wristband ' + self.wristband.data
             valid = False
 
