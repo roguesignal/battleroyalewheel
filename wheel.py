@@ -208,7 +208,8 @@ def exitplayer():
                 entry = p.active_entry()
                 entry.exit_player()
                 db.session.commit()
-                flash('EXIT SUCCESSFUL')
+                flash('EXIT SUCCESSFUL - ' + str(p.name))
+                ef = ExitForm({})
             except Exception as e:
                 flash('SOMETHING HORKED ON EXIT')
                 app.logger.error('error on exit: ' + str(e))
