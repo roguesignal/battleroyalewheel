@@ -16,12 +16,11 @@ from models import Entry
 from models import Game
 from models import Spin
 
-## helper functions
-
 import random
 from datetime import datetime
 from datetime import timedelta
 
+## helper functions
 def hhmmss(sec):
     m, s = divmod(sec, 60)
     h, m = divmod(m, 60)
@@ -50,8 +49,7 @@ def spinthewheel():
     spin = Spin(game_name, entry_ids)
     db.session.add(spin)
     db.session.commit()
-    # TODO: update num_plays?
-    # TODO: error catching?
+    # TODO: error catching
     return True
 
 ## websockets
@@ -61,9 +59,12 @@ socketio = SocketIO(app)
 thread = None
 
 def background_thread():
+    """ manages the leaderboard and wheel spin for the websockets """
+
     # import the app context
     ctx = app.test_request_context()
     ctx.push()
+
     while True:
         socketio.sleep(1)
 
