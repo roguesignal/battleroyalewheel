@@ -91,19 +91,25 @@ def background_thread():
             if tt['dead'] == 'false':
                 leader = tt['name']
                 break
-        
+
+        # latest spin, checks to see if recent with recent_spin()
         spins = Spin.query.order_by('id').all()
-        if len(spins) > 0:
+        if spins and len(spins) > 0:
             latest_spin = spins[-1]
             game_name = latest_spin.game_name
             spin_players = " | ".join(latest_spin.spin_players())
-            if latest_spin.recent_spin():
+            if latest_spin and latest_spin.recent_spin():
                 recent_spin = 'true'
             else:
                 recent_spin = 'false'
         else:
             game_name = 'WAIT FOR IT'
             spin_players = ''
+            recent_spin = 'false'
+
+        # elapsed time
+        first_entry = Entry.query.first()
+        game_elapsed = hhmmss((datetime.utcnow() - first_entry.created_on).seconds)
 
         socketio.emit('refresh',
             {
@@ -111,19 +117,9 @@ def background_thread():
                 'toptimes': toptimes,
                 'showwheel': 'placeholder',
                 'spin': {'game': game_name, 'players': spin_players, 'recent': recent_spin},
+                'gametime': game_elapsed,
             },
             namespace='/leader')
-        #socketio.emit('refresh',
-        #    {
-        #        'leader': {'name': 'h@x0r5'},
-        #        'toptimes': [ { 'name': 'bobross', 'time': '01h 55m 01s', 'dead': 'true'},
-        #            { 'name': 'lightningpants', 'time': '01h 20m 11s', 'dead': 'true'},
-        #            { 'name': 'h@xor5', 'time': '40m 31s', 'dead': 'false'},
-        #            { 'name': 'frodobaggins', 'time': '12m 44s', 'dead': 'true'},
-        #        ],
-        #        'showwheel': 'placeholder',
-        #    },
-        #    namespace='/leader')
 
 @socketio.on('connect')
 def test_connect():
@@ -134,7 +130,7 @@ def test_connect():
 
 @socketio.on('disconnect')
 def test_disconnect():
-    print('client disconnected')
+    app.logger.warn('client disconnected')
 
 from forms import NewEntryForm
 from forms import ReturnEntryForm
@@ -305,7 +301,6 @@ def config():
         gamesl.append(gd)
 
     gamesl = sorted(gamesl, key=lambda k: k['name'])
-
     return render_template('config.html', games=gamesl, ngf=ngf)
 
 @app.route('/disablegame/<id>', methods=['GET'])
@@ -332,6 +327,20 @@ def deletegame(id):
 @app.route('/leader', methods=['GET'])
 def leaderboard():
     return render_template('leader.html')
+
+@app.route('/reset', methods=['POST'])
+def reset_players():
+    if 'reset_players' in request.form:
+        Player.query.delete()
+        Entry.query.delete()
+        Spin.query.delete()
+        db.session.commit()
+    elif 'reset_spins' in request.form:
+        Spin.query.delete()
+        db.session.commit()
+    else:
+        app.logger.info.warn('called reset without proper button')
+    return redirect('/config')
 
 import os
 
