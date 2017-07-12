@@ -39,7 +39,7 @@
     <div class="col-sm-6">
         <h4 style="text-align:right;">new game</h4>
         <div class="row">
-            <form class="form-horizontal" action="/games" method="POST">
+            <form class="form-horizontal" action="/config" method="POST">
             <div class="col-sm-10 col-sm-offset-2">
                 {{ ngf.csrf_token }}
                 {{ flp.render(ngf.name, label_width=4) }}
@@ -75,25 +75,3 @@
     </div>
 </div>
 {% endblock %}
-{%- block internal_body_js %}
-<script>
-    $(document).ready(function() {
-        $("span[id^=game-disable-]".click(function() {
-            var gameid = this.id.match(/\d+/);
-            $.post("/games/disable/" + gameid, function(data) {
-                $.each(data, function(i, v) {
-            // TODO: check for response
-            // TODO: make activate appear and disable disappear
-                }
-            }
-        }
-        $("span[id^=game-activate-]".click(function() {
-            var gameid = this.id.match(/\d+/);
-            $.post("/games/activate/" + gameid, function(data));
-            // TODO: check for response
-            // TODO: make disable appear and activate disappear
-        }
-        $("span[id^=game-delete-]".click(function() {
-        }
-    }
-{% endblock -%}
