@@ -108,8 +108,11 @@ def background_thread():
             recent_spin = 'false'
 
         # elapsed time
-        first_entry = Entry.query.first()
-        game_elapsed = hhmmss((datetime.utcnow() - first_entry.created_on).seconds)
+        first_entry = Entry.query.order_by('id').first()
+        if first_entry:
+            game_elapsed = hhmmss((datetime.utcnow() - first_entry.created_on).seconds)
+        else:
+            game_elapsed = 'NO ENTRANTS YET'
 
         socketio.emit('refresh',
             {
@@ -331,9 +334,9 @@ def leaderboard():
 @app.route('/reset', methods=['POST'])
 def reset_players():
     if 'reset_players' in request.form:
-        Player.query.delete()
-        Entry.query.delete()
         Spin.query.delete()
+        Entry.query.delete()
+        Player.query.delete()
         db.session.commit()
     elif 'reset_spins' in request.form:
         Spin.query.delete()
