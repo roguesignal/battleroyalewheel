@@ -3,9 +3,19 @@ royale with wheel
 
 ## dev environment setup (os x)
 
+make sure you have XCode and the command line tools installed
+
+    > xcode-select --install
+
 ### install postgres and set up database
 
 get the Postgres.app binary from [here](https://www.postgresql.org/download/macosx/)
+
+add the path containing `psql` to your PATH, e.g.,
+
+    > export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
+
+now create the database
 
     > psql
     > create database brw;
@@ -20,8 +30,8 @@ get the Postgres.app binary from [here](https://www.postgresql.org/download/maco
 ### clone this repo and set up the virtual env
     > git clone https://github.com/trammellventures/royalewheel
     > cd royalewheel
-    > pyvenv venv
-    > source venv/activate/bin
+    > python3 -m venv venv
+    > source venv/bin/activate
     > pip install -r requirements.txt
 
 note that `source venv/activate/bin` loads the virtual environment and needs to
