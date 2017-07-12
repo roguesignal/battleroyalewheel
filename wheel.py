@@ -193,7 +193,7 @@ def entry():
                         entry = Entry(player, ref.collarid.data, active=True)
                         db.session.add(entry)
                         db.session.commit()
-                        playername = Player.player_wristband(ref.wristband.data)
+                        playername = Player.player_wristband(ref.wristband.data).name
                         flash('RETURNING PLAYER ' + playername + ' ENTERED')
                         ref = ReturnEntryForm({})
                     except Exception as e:
