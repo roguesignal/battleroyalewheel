@@ -20,6 +20,10 @@
             <div id="socketio-toptimes"></div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12" style="text-align:right;">
+            <h4>elapsed time: <span id="socketio-elapsedtime"></span></h4>
+        </div>
 </div>
 <div id="wheel" style="display:none;">
     <div class="header clearfix">
@@ -70,6 +74,7 @@
                         $('#wheel').toggle(false);
                         $('#leaderboard').toggle(true);
                     }
+                    $('#socketio-elapsedtime').text(data['gametime']);
                 });
             } 
         });
