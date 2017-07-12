@@ -5,7 +5,7 @@ royale with wheel
 
 ### install postgres and set up database
 
-get the postgres binary [here](https://www.postgresql.org/download/macosx/)
+get the Postgres.app binary from [here](https://www.postgresql.org/download/macosx/)
 
     > psql
     > create database brw;
