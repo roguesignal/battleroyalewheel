@@ -126,13 +126,6 @@ class Entry(Base):
             return e.player_name
         return False
 
-    @classmethod
-    def latest_collar_playername(cls, collar):
-        ents = Entry.query.filter(Entry.collar == collar, Entry.active == True).order_by('id')
-        if ents:
-            return ents[-1].player_name
-        return False
-
 
 class Game(Base):
     """ A game in the system. """
@@ -165,8 +158,8 @@ class Spin(Base):
         return collars
 
     def spin_players(self):
-        collars = self.spin_collars()
-        players = [ Entry.latest_collar_playername(c) for c in collars ]
+        entries = [ Entry.query.filter(Entry.id == ent).one_or_none() for ent in self.entries.split(',') ]
+        players = [ e.player_name for e in entries ]
         return players
 
     def recent_spin(self):
