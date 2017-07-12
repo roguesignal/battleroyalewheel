@@ -276,8 +276,8 @@ def players():
     now = datetime.utcnow()
     return render_template('players.html', players=playersl, now=now)
 
-@app.route('/games', methods=['GET', 'POST'])
-def games():
+@app.route('/config', methods=['GET', 'POST'])
+def config():
     if request.method == 'POST':
         ngf = NewGameForm(request.form)
         if 'newgame' in request.form:
@@ -306,28 +306,28 @@ def games():
 
     gamesl = sorted(gamesl, key=lambda k: k['name'])
 
-    return render_template('games.html', games=gamesl, ngf=ngf)
+    return render_template('config.html', games=gamesl, ngf=ngf)
 
 @app.route('/disablegame/<id>', methods=['GET'])
 def disablegame(id):
     game = Game.query.filter(Game.id == id).one_or_none()
     game.active = False
     db.session.commit()
-    return redirect('/games')
+    return redirect('/config')
 
 @app.route('/activategame/<id>', methods=['GET'])
 def activategame(id):
     game = Game.query.filter(Game.id == id).one_or_none()
     game.active = True
     db.session.commit()
-    return redirect('/games')
+    return redirect('/config')
 
 @app.route('/deletegame/<id>', methods=['GET'])
 def deletegame(id):
     game = Game.query.filter(Game.id == id).one_or_none()
     db.session.delete(game)
     db.session.commit()
-    return redirect('/games')
+    return redirect('/config')
 
 @app.route('/leader', methods=['GET'])
 def leaderboard():
