@@ -225,7 +225,7 @@ def exitplayer():
                 entry = p.active_entry()
                 entry.exit_player()
                 db.session.commit()
-                flash('EXIT SUCCESSFUL - ' + str(p.name) + ' | wrist: ' + str(p.wristband) + ' | collar: ' + str(entry.collar))
+                flash('EXIT SUCCESSFUL - ' + str(p.name) + ' | ' + str(p.wristband) + ' | ' + str(entry.collar))
                 ef = ExitForm({})
             except Exception as e:
                 flash('SOMETHING HORKED ON EXIT')
