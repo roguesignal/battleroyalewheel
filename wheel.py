@@ -26,7 +26,7 @@ def hhmmss(sec):
     h, m = divmod(m, 60)
     if h > 0:
         return "%dh %02dm %02ds" % (h, m, s)
-    return "%2dm %02ds" % (m, s)
+    return "%dm %02ds" % (m, s)
 
 def spinthewheel():
     """ spin the wheel and add result to database """
@@ -269,7 +269,7 @@ def players():
         pd['name'] = p.name
         pd['wrist'] = p.wristband
         active_entry = p.active_entry()
-        pd['collar'] = active_entry.collar if active_entry else 'DEAD'
+        pd['collar'] = active_entry.collar if active_entry else '----'
         pd['grace'] = active_entry.grace_until if active_entry and active_entry.grace_until > datetime.utcnow() else '----'
         playersl.append(pd)
 

@@ -138,7 +138,7 @@ class Game(Base):
     def __init__(self, name, num_players):
         self.name = name
         self.num_players = int(num_players)
-        self.active = False
+        self.active = True
 
 
 class Spin(Base):
