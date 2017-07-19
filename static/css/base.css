@@ -1,8 +1,63 @@
 body {
     padding-top: 40px;
     padding-bottom: 40px;
-    background-color: #ccc;
+    background-color: #000;
+    color: #fff;
+    font-size: 20px;
+    font-family: Orbitron;
 }
+
+.text-danger{
+  color: #b92c28;
+}
+
+@font-face {
+    font-family: "Angles Octagon";
+    src: url("/static/fonts/Angles Octagon.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Orbitron";
+    src: url("/static/fonts/orbitron-medium.otf") format("opentype");
+}
+p.customfont {
+    font-family: "Angles Octagon", Verdana, Tahoma;
+}
+
+h3{
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+  font-size: 200%;
+  color: #b92c28;
+}
+
+h4{
+  color:#fff;
+}
+
+a{
+  color:#b92c28;
+}
+
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #b92c28;
+    border-color: #e38d13;
+}
+
+.btn-primary{
+    color: #fff;
+    background-color: #d22;
+    border-color: #e38d13;
+}
+
+h1{
+    color: #fff;
+    font-family: Angles Octagon;
+}
+
 
 /* HEADER */
 
@@ -10,22 +65,29 @@ body {
   padding-right: 15px;
   padding-left: 15px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid #ffffff;
 }
 
 .nav li {
-    font-size: 150%;
+    font-size: 100%;
+    color: #fff;
+}
+
+.div li{
+  color: #fff;
 }
 
 .header h2 {
   margin-top: 0;
   margin-bottom: 0;
-  line-height: 40px;
+  line-height: 80px;
   font-size: 200%;
+  font-family: Angles Octagon;
+  color: #fff;
 }
 
 .list-group p {
-  background-color:#5C5;
+  background-color:#fff;
   font-size: 150%;
 }
 
@@ -48,6 +110,8 @@ body {
 h1.page-header {
   margin-top: 0;
   text-align: right;
+  font-family: Angles Octagon;
+  color: #ffffff;
 }
 
 @media (min-width: 768px) {
@@ -55,10 +119,10 @@ h1.page-header {
 /*    position: fixed; */
 /*    top: 51px; */
     bottom: 0;
-    left: 0; 
+    left: 0;
     z-index: 1000;
     display: block;
-    padding: 0 20px; 
+    padding: 0 20px;
     overflow-x: hidden;
     overflow-y: auto; /* scrollable contents */
     background-color: #f5f5f5;
@@ -147,13 +211,17 @@ h1.page-header {
 
 label {
     font-size: 135%;
+    color:#d22;
 }
 
 label.warning {
     color:#D22;
 }
 
-.tooltip-inner { 
+label.control-label{
+    color: #fff;
+}
+.tooltip-inner {
     text-align:left;
     width:350px;
     max-width: 350px;
@@ -198,21 +266,21 @@ form .error {
 }
 
 .btn-primary.btn-circle{
-  -webkit-box-shadow: 0px 0px 3px 1px #245580;
-  -moz-box-shadow:    0px 0px 3px 1px #245580;
-  box-shadow:         0px 0px 3px 1px #245580;
+  -webkit-box-shadow: 0px 0px 3px 1px #aa3311;
+  -moz-box-shadow:    0px 0px 3px 1px #aa3311;
+  box-shadow:         0px 0px 3px 1px #aa3311;
 }
 
 .btn-info.btn-circle{
-  -webkit-box-shadow: 0px 0px 3px 1px #28a4c9;
-  -moz-box-shadow:    0px 0px 3px 1px #28a4c9;
-  box-shadow:         0px 0px 3px 1px #28a4c9;
+  -webkit-box-shadow: 0px 0px 3px 1px #b92c28;
+  -moz-box-shadow:    0px 0px 3px 1px #b92c28;
+  box-shadow:         0px 0px 3px 1px #b92c28;
 }
 
 .btn-success.btn-circle{
-  -webkit-box-shadow: 0px 0px 3px 1px #3e8f3e;
-  -moz-box-shadow:    0px 0px 3px 1px #3e8f3e;
-  box-shadow:         0px 0px 3px 1px #3e8f3e;
+  -webkit-box-shadow: 0px 0px 3px 1px #AA3311;
+  -moz-box-shadow:    0px 0px 3px 1px #AA3311;
+  box-shadow:         0px 0px 3px 1px #AA3311;
 }
 
 .btn-danger.btn-circle{
@@ -229,4 +297,3 @@ form .error {
 
 .btn-default.btn-circle{
   -webkit-box-shadow: 0px 0px 3px 1px #ccc;
-

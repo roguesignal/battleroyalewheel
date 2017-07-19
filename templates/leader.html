@@ -5,27 +5,33 @@
 {%- block custom_body %}
 <div id="leaderboard">
     <div class="header clearfix">
-        <h1>BATTLE ROYALE LEADERBOARD</h1>
+        <h1>DEFCON BATTLE ROYALE</h1>
     </div>
     <div class="row">
-        <div class="col-sm-8 col-sm-offset-2" style="text-align:center;">
-            <h3>CURRENT LEADER</h3>
-            <span id="socketio-leader" style="text-align:center;font-size:150%"></span>
-            <img src="/static/img/katana.png" style="width:50px;">
-        </div>
+      <div class="col-sm-8 col-sm-offset-2" style="text-align:center;">
+           <h3>CURRENT LEADER</h3>
+           <span id="socketio-leader" style="text-align:center;font-size:150%"></span>
+           <img src="/static/img/katana_red.png" style="width:50px;">
+       </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <h3>TOP PLAYER TIMES</h3>
-            <div id="socketio-toptimes"></div>
-        </div>
-    </div>
+          <div class="row">
+  <div class="col-6">
+    <div class="row"
+    <h3>TOP PLAYER TIMES</h3>
+    <div id="socketio-toptimes"></div>
+  </div>
+</div>
+  <div class="col-6">
+              <img src="/static/img/BRLogo.png" style="width:200px; float:right; padding-bottom: 20px; transform: rotate(-25deg);">
+  </div>
+</div>
+</div>
+
     <div class="row">
         <div class="col-sm-12" style="text-align:right;">
             <h4>elapsed time: <span id="socketio-elapsedtime"></span></h4>
         </div>
     </div>
-</div>
 <div id="wheel" style="display:none;">
     <div class="header clearfix">
         <h1>SPIN THE WHEEL</h1>
@@ -34,9 +40,11 @@
         <div class="col col-sm-10 col-sm-offset-1" style="text-align:center;">
             [INSERT WHEEL HERE]
             <br>
-            <h2>GAME<h2>
+            <h2>GAME</h2>
             <h3 id="socketio-game"></h3>
-            <h4 id="socketio-players"></h4>
+            <h2> PLAYERS </h2>
+            <h3 id="socketio-players"></h3>
+              <img src="/static/img/BRLogo.png" style="width:200px; float:right; padding-bottom: 20px; transform: rotate(-25deg);">
         </div>
     </div>
 </div>
@@ -48,7 +56,7 @@
             $.each(j, function(i, v) {
                 outstr += '<div class="row"><div class="col-sm-1">';
                 if (v['dead'] == 'true') {
-                    outstr += '<img src="/static/img/skull.svg" style="width:25px;">';
+                    outstr += '<img src="/static/img/red-x-sm.png" style="width:25px;">';
                 }
                 outstr += '</div><div class="col-sm-3">';
                 outstr += v['name'];
@@ -77,7 +85,7 @@
                     }
                     $('#socketio-elapsedtime').text(data['gametime']);
                 });
-            } 
+            }
         });
     </script>
 {% endblock %}
