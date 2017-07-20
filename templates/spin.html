@@ -2,7 +2,7 @@
 {% import "form_helper.html" as flp %}
 {% block menu_custom_body %}
 <h3 class="alcenter text-danger">SPIN THE WHEEL</h3>
-<br><br><br>
+<br>
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
         <form action="/spin" method="POST">
@@ -17,11 +17,12 @@
         {% if spinerror %}
             <h2 style="color:Orange;">WAIT UP! Not enough free players.</h2>
         {% endif %}
-        <h2>Next Game:</h2><h2  style="color:#d22;"> {{ history[0]['game']}}</h2>
+        <h2>Next Game:</h2>
+        <h2 style="color:#d22;"> {{ history[0]['game']}}</h2>
         <h2>Player Collar Numbers:</h2>
         <div class="row">
             {% for c in history[0]['collars'] %}
-            <div class="col-sm-2" style="font-size:200%; color:#d22;">
+            <div class="col-sm-4" style="font-size:125%; color:#d22;">
                 {{ c }}
             </div>
             {% endfor %}
@@ -40,7 +41,7 @@
         <h4 style="color:#d22;">History</h4>
         {% for h in history %}
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-5">
                 {{ h['timestamp'] }}
             </div>
             <div class="col-sm-2">
