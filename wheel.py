@@ -22,6 +22,8 @@ from datetime import timedelta
 
 ## helper functions
 def hhmmss(sec):
+    """ returns hours, minutes, and seconds from seconds """
+    # TODO: add a handler for 'days' for long games
     m, s = divmod(sec, 60)
     h, m = divmod(m, 60)
     if h > 0:
