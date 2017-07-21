@@ -43,6 +43,9 @@
         function renderTopTimes(j) {
             outstr = "";
             $.each(j, function(i, v) {
+                if (i > 10) {
+                    return false;
+                }
                 outstr += '<div class="row"><div class="col-sm-1">';
                 if (v['dead'] == 'true') {
                     outstr += '<img src="/static/img/red-x-sm.png" style="width:25px;">';
@@ -51,7 +54,7 @@
                 outstr += v['name'];
                 outstr += '</div><div class="col-sm-5">';
                 outstr += v['time'];
-                outstr += '</div></div>'
+                outstr += '</div></div>';
             });
             return outstr;
         }
