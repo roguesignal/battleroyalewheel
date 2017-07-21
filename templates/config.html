@@ -40,10 +40,10 @@
         <h4 style="text-align:right;">new game</h4>
         <div class="row">
             <form class="form-horizontal" action="/config" method="POST">
-            <div class="col-sm-10 col-sm-offset-2">
+            <div class="col-sm-12">
                 {{ ngf.csrf_token }}
-                {{ flp.render(ngf.name, label_width=4) }}
-                {{ flp.render(ngf.num_players, label_width=4) }}
+                {{ flp.render(ngf.name, label_width=5) }}
+                {{ flp.render(ngf.num_players, label_width=5) }}
             </div>
             <div class="col-sm-7 col-sm-offset-5">
                 <button class="btn btn-primary btn-block" type="submit" name="newgame">NEW GAME</button>
@@ -57,7 +57,7 @@
         </div>
     </div>
 </div>
-<br><br><br><br><br><br><br><br>
+<br><br><br><br><br>
 <h3 class="alcenter text-danger">ADMIN</h3>
 <br><br><br>
 <div class="row">

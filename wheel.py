@@ -282,10 +282,10 @@ def players():
         pd['wrist'] = p.wristband
         active_entry = p.active_entry()
         pd['collar'] = active_entry.collar if active_entry else '----'
-        pd['grace'] = active_entry.grace_until if active_entry and active_entry.grace_until > datetime.utcnow() else '----'
+        pd['grace'] = str(active_entry.grace_until)[:-7] if active_entry and active_entry.grace_until > datetime.utcnow() else '----'
         playersl.append(pd)
 
-    now = datetime.utcnow()
+    now = str(datetime.utcnow())[:-7]
     return render_template('players.html', players=playersl, now=now)
 
 @app.route('/config', methods=['GET', 'POST'])
