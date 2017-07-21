@@ -14,12 +14,10 @@
            <img src="/static/img/katana_red.png" style="width:50px;">
        </div>
     </div>
-          <div class="row">
-  <div class="col-6">
-    <div class="row"
-    <h3>TOP PLAYER TIMES</h3>
-    <div id="socketio-toptimes"></div>
-  </div>
+    <div class="row">
+        <h4>TOP PLAYER TIMES</h4>
+        <div id="socketio-toptimes"></div>
+    </div>
 </div>
 <div id="wheel" style="display:none;">
     <div class="header clearfix">
@@ -27,24 +25,18 @@
     </div>
     <div class="row">
         <div class="col col-sm-10 col-sm-offset-1" style="text-align:center;">
-            [INSERT WHEEL HERE]
-            <br>
-            <h2>GAME</h2>
-            <h3 id="socketio-game"></h3>
-            <h2> PLAYERS </h2>
-            <h3 id="socketio-players"></h3>
-              <img src="/static/img/BRLogo.png" style="width:200px; float:right; padding-bottom: 20px; transform: rotate(-25deg);">
+            <div id="wheel-viz"></div>
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-sm-4 col-sm-offset-4" style="text-align:center; padding:150px 0 0 0;">
-        <h4>elapsed time: <span id="socketio-elapsedtime"></span></h4>
-    </div>
-    <div class="col-sm-4">
-        <img src="/static/img/BRLogo.png" style="width:200px; float:right; transform: rotate(-25deg);">
-    </div>
+
+<div style="position:fixed; bottom:0;">
+    <h4 style="color:#fff;">elapsed time: <span id="socketio-elapsedtime"></span></h4>
 </div>
+<div style="position:fixed; bottom:0; right:0;">
+    <img src="/static/img/BRLogo.png" style="width:200px; float:right; transform: rotate(-25deg);">
+</div>
+
 {% endblock %}
 {% block body_js %}
     <script>
@@ -55,9 +47,9 @@
                 if (v['dead'] == 'true') {
                     outstr += '<img src="/static/img/red-x-sm.png" style="width:25px;">';
                 }
-                outstr += '</div><div class="col-sm-3">';
-                outstr += v['name'];
                 outstr += '</div><div class="col-sm-2">';
+                outstr += v['name'];
+                outstr += '</div><div class="col-sm-5">';
                 outstr += v['time'];
                 outstr += '</div></div>'
             });
@@ -71,15 +63,27 @@
                 socket.on('refresh', function(data) {
                     $('#socketio-leader').text(data['leader']['name']);
                     $('#socketio-toptimes').html(renderTopTimes(data['toptimes']));
-                    $('#socketio-game').text(data['spin']['game']);
-                    $('#socketio-players').text(data['spin']['players']);
-                    if (data['spin']['recent'] == 'true') {
+                    if (data['spin']['show']) {
                         $('#wheel').toggle(true);
                         $('#leaderboard').toggle(false);
+                        if (data['spin']['state'] == 'wheel') {
+                            $('#wheel-viz').html('<br><h1 style="font-size:800%;">WHEEL</h1>');
+                        } else if (data['spin']['state'] == 'of') {
+                            $('#wheel-viz').html('<br><h1 style="font-size:800%;">OF</h1>');
+                        } else if (data['spin']['state'] == 'death') {
+                            $('#wheel-viz').html('<br><h1 style="font-size:800%;">DEATH</h1>');
+                        } else if (data['spin']['state'] == 'spinner') {
+                            $('#wheel-viz').html('[spinner]');
+                        } else if (data['spin']['state'] == 'results') {
+                            $('#wheel-viz').html('<h3 id="socketio-game"></h3><h3 id="socketio-players"></h3>');
+                        }
                     } else {
+                        // 'leaderboard' should also be passed but no point in checking
                         $('#wheel').toggle(false);
                         $('#leaderboard').toggle(true);
                     }
+                    $('#socketio-game').text(data['spin']['game']);
+                    $('#socketio-players').text(data['spin']['players']);
                     $('#socketio-elapsedtime').text(data['gametime']);
                 });
             }

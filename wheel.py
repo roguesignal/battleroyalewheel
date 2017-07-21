@@ -101,14 +101,19 @@ def background_thread():
             latest_spin = spins[-1]
             game_name = latest_spin.game_name
             spin_players = " | ".join(latest_spin.spin_players())
-            if latest_spin and latest_spin.recent_spin():
-                recent_spin = 'true'
+            if latest_spin:
+                spin_state = latest_spin.spin_state()
             else:
-                recent_spin = 'false'
+                spin_state = 'leaderboard'
         else:
             game_name = 'WAIT FOR IT'
             spin_players = ''
-            recent_spin = 'false'
+            spin_state = 'leaderboard'
+
+        if spin_state != 'leaderboard':
+            show_spin = True
+        else:
+            show_spin = False
 
         # elapsed time
         first_entry = Entry.query.order_by('id').first()
@@ -122,7 +127,12 @@ def background_thread():
                 'leader': {'name': leader},
                 'toptimes': toptimes,
                 'showwheel': 'placeholder',
-                'spin': {'game': game_name, 'players': spin_players, 'recent': recent_spin},
+                'spin': {
+                    'show': show_spin,
+                    'game': game_name,
+                    'players': spin_players,
+                    'state': spin_state
+                },
                 'gametime': game_elapsed,
             },
             namespace='/leader')

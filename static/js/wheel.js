@@ -150,7 +150,6 @@ jQuery.fn.momentus = function(cfg){
   return this;
 }
 
-
 $('.wheel').momentus({
   u: 1,
   mass: 1000,

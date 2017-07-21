@@ -162,8 +162,17 @@ class Spin(Base):
         players = [ e.player_name for e in entries ]
         return players
 
-    def recent_spin(self):
-        if self.created_on + timedelta(seconds=30) > datetime.utcnow():  
-            return True
-        return False
+    def spin_state(self):
+        if self.created_on + timedelta(seconds=3) > datetime.utcnow():  
+            return 'wheel'
+        elif self.created_on + timedelta(seconds=5) > datetime.utcnow():  
+            return 'of'
+        elif self.created_on + timedelta(seconds=7) > datetime.utcnow():  
+            return 'death'
+        elif self.created_on + timedelta(seconds=15) > datetime.utcnow():  
+            return 'spinner'
+        elif self.created_on + timedelta(seconds=60) > datetime.utcnow():  
+            return 'results'
+        return 'leaderboard'
+
 
