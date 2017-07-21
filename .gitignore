@@ -102,3 +102,5 @@ ENV/
 
 # vim swapfiles
 *.swp
+
+.DS_Store
