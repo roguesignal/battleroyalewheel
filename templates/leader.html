@@ -25,7 +25,15 @@
     </div>
     <div class="row">
         <div class="col col-sm-10 col-sm-offset-1" style="text-align:center;">
-            <div id="wheel-viz"></div>
+            <div id="wheel-msg" style="display:none;"></div>
+            <div id="wheel-spinner" style="display:none;">
+                <img src="/static/img/wheel_spinning.gif" width="500px;">
+            </div>
+            <div id="wheel-result" style="display:none;">
+                <img src="/static/img/wheel_static.png" width="500px;">
+                <h3 id="socketio-game" style="color:#fff;margin-top:20px;"></h3>
+                <h3 id="socketio-players" style="margin-top:20px;"></h3>
+            </div>
         </div>
     </div>
 </div>
@@ -70,15 +78,28 @@
                         $('#wheel').toggle(true);
                         $('#leaderboard').toggle(false);
                         if (data['spin']['state'] == 'wheel') {
-                            $('#wheel-viz').html('<br><h1 style="font-size:800%;">WHEEL</h1>');
+                            $('#wheel-result').toggle(false);
+                            $('#wheel-spinner').toggle(false);
+                            $('#wheel-msg').html('<br><h1 style="font-size:800%;">WHEEL</h1>');
+                            $('#wheel-msg').toggle(true);
                         } else if (data['spin']['state'] == 'of') {
-                            $('#wheel-viz').html('<br><h1 style="font-size:800%;">OF</h1>');
+                            $('#wheel-result').toggle(false);
+                            $('#wheel-spinner').toggle(false);
+                            $('#wheel-msg').html('<br><h1 style="font-size:800%;">OF</h1>');
+                            $('#wheel-msg').toggle(true);
                         } else if (data['spin']['state'] == 'death') {
-                            $('#wheel-viz').html('<br><h1 style="font-size:800%;">DEATH</h1>');
+                            $('#wheel-result').toggle(false);
+                            $('#wheel-spinner').toggle(false);
+                            $('#wheel-msg').html('<br><h1 style="font-size:800%;">DEATH</h1>');
+                            $('#wheel-msg').toggle(true);
                         } else if (data['spin']['state'] == 'spinner') {
-                            $('#wheel-viz').html('[spinner]');
+                            $('#wheel-msg').toggle(false);
+                            $('#wheel-result').toggle(false);
+                            $('#wheel-spinner').toggle(true);
                         } else if (data['spin']['state'] == 'results') {
-                            $('#wheel-viz').html('<h3 id="socketio-game"></h3><h3 id="socketio-players"></h3>');
+                            $('#wheel-msg').toggle(false);
+                            $('#wheel-spinner').toggle(false);
+                            $('#wheel-result').toggle(true);
                         }
                     } else {
                         // 'leaderboard' should also be passed but no point in checking
