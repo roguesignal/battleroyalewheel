@@ -7,7 +7,7 @@
     <div class="col-sm-6 col-sm-offset-3">
         <form action="/spin" method="POST">
             <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
-            <button class="btn btn-lg btn-primary btn-block" type="submit">SPIN</button>
+            <button class="btn btn-lg btn-primary btn-block" id="spin-btn" type="submit">SPIN</button>
         </form>
     </div>
 </div>
@@ -41,16 +41,26 @@
         <h4 style="color:#d22;">Spin History</h4>
         {% for h in history %}
         <div class="row">
-            <div class="col-sm-5">
+            <div class="col-sm-2" style="text-align:right;">
                 {{ h['timestamp'] }}
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 {{ h['game'] }}
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-7">
                 {{ ", ".join(h['collars']) }}
             </div>
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+{% block body_js %}
+<script>
+    $(document).keydown(function(e) {
+        // when '.' is clicked, spin the wheel
+        if (e.keyCode == 190) {
+            $('#spin-btn').click();
+        }
+    });
+</script>
 {% endblock %}

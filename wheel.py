@@ -262,7 +262,7 @@ def spin():
         hist['game'] = s.game_name
         entries = [ Entry.query.filter(Entry.id == ent).one_or_none() for ent in s.entries.split(',') ] 
         hist['collars'] = [ e.collar for e in entries ]
-        hist['timestamp'] = s.created_on
+        hist['timestamp'] = str(s.created_on).split()[1][:-7]
         history.append(hist)
 
     if not spins:
