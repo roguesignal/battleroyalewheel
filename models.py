@@ -159,7 +159,7 @@ class Spin(Base):
 
     def spin_players(self):
         entries = [ Entry.query.filter(Entry.id == ent).one_or_none() for ent in self.entries.split(',') ]
-        players = [ e.player_name for e in entries ]
+        players = [ (e.player_name, e.collar) for e in entries ]
         return players
 
     def spin_state(self):
@@ -169,9 +169,9 @@ class Spin(Base):
             return 'of'
         elif self.created_on + timedelta(seconds=7) > datetime.utcnow():  
             return 'death'
-        elif self.created_on + timedelta(seconds=15) > datetime.utcnow():  
+        elif self.created_on + timedelta(seconds=13) > datetime.utcnow():  
             return 'spinner'
-        elif self.created_on + timedelta(seconds=60) > datetime.utcnow():  
+        elif self.created_on + timedelta(seconds=50) > datetime.utcnow():  
             return 'results'
         return 'leaderboard'
 

@@ -27,10 +27,10 @@
         <div class="col col-sm-10 col-sm-offset-1" style="text-align:center;">
             <div id="wheel-msg" style="display:none;"></div>
             <div id="wheel-spinner" style="display:none;">
-                <img src="/static/img/wheel_spinning.gif" width="500px;">
+                <img src="/static/img/wheel_spinning.gif" width="600px;">
             </div>
             <div id="wheel-result" style="display:none;">
-                <img src="/static/img/wheel_static.png" width="500px;">
+                <img src="/static/img/wheel_static.png" width="600px;">
                 <h3 id="socketio-game" style="color:#fff;margin-top:20px;"></h3>
                 <h3 id="socketio-players" style="margin-top:20px;"></h3>
             </div>
@@ -51,14 +51,14 @@
         function renderTopTimes(j) {
             outstr = "";
             $.each(j, function(i, v) {
-                if (i > 10) {
+                if (i >= 10) {
                     return false;
                 }
-                outstr += '<div class="row"><div class="col-sm-1">';
+                outstr += '<div class="row" style="font-size:125%"><div class="col-sm-1">';
                 if (v['dead'] == 'true') {
                     outstr += '<img src="/static/img/red-x-sm.png" style="width:25px;">';
                 }
-                outstr += '</div><div class="col-sm-2">';
+                outstr += '</div><div class="col-sm-4">';
                 outstr += v['name'];
                 outstr += '</div><div class="col-sm-5">';
                 outstr += v['time'];
@@ -107,7 +107,7 @@
                         $('#leaderboard').toggle(true);
                     }
                     $('#socketio-game').text(data['spin']['game']);
-                    $('#socketio-players').text(data['spin']['players']);
+                    $('#socketio-players').html(data['spin']['players']);
                     $('#socketio-elapsedtime').text(data['gametime']);
                 });
             }

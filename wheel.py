@@ -15,6 +15,7 @@ from models import Player
 from models import Entry
 from models import Game
 from models import Spin
+from models import utcnow
 
 import random
 from datetime import datetime
@@ -100,7 +101,11 @@ def background_thread():
         if spins and len(spins) > 0:
             latest_spin = spins[-1]
             game_name = latest_spin.game_name
-            spin_players = " | ".join(latest_spin.spin_players())
+            spin_players = '<div class="row">'
+            for sp in latest_spin.spin_players():
+                spin_players += '<div class="col-sm-2">' + sp[0] + '<br><span style="color:#AAA">[' + sp[1] + ']</span></div>'
+            spin_players += '</div>'
+            #spin_players = " | ".join(latest_spin.spin_players())
             if latest_spin:
                 spin_state = latest_spin.spin_state()
             else:
@@ -346,7 +351,13 @@ def leaderboard():
 
 @app.route('/reset', methods=['POST'])
 def reset_players():
-    if 'reset_players' in request.form:
+    if 'reset_entries' in request.form:
+        all_entries = Entry.query.all()
+        t = utcnow()
+        for e in all_entries:
+            e.created_on = t
+        db.session.commit()
+    elif 'reset_players' in request.form:
         Spin.query.delete()
         Entry.query.delete()
         Player.query.delete()
