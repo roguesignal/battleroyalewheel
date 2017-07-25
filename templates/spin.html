@@ -14,8 +14,10 @@
 <br>
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
-        {% if spinerror %}
+        {% if spinerror == 'players' %}
             <h2 style="color:Orange;">WAIT UP! Not enough free players.</h2>
+        {% elif spinerror == 'toofast' %}
+            <h2 style="color:Orange;">HOLD UP! You just spun!</h2>
         {% endif %}
         <h2>Next Game:</h2>
         <h2 style="color:#d22;"> {{ history[0]['game']}}</h2>

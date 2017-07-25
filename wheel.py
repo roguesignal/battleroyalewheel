@@ -37,11 +37,17 @@ def spinthewheel():
     all_games = Game.query.filter(Game.active == True).all()
     available_entries = Entry.available_entries()
     possible_games = []
+    # check to make sure that there's enough players for the games
     for g in all_games:
         if g.num_players <= len(available_entries):
             possible_games.append(g)
     if len(possible_games) < 1:
-        return False
+        return 'players'
+    # check to make sure we haven't spun too recently
+    latest_spin = Spin.query.order_by('created_on desc').first()
+    if latest_spin and latest_spin.too_recent():
+        return 'toofast'
+    # now do the thing
     game = random.choice(possible_games)
     game_name = game.name
     entries = random.sample(available_entries, game.num_players)
@@ -54,7 +60,7 @@ def spinthewheel():
     db.session.add(spin)
     db.session.commit()
     # TODO: error catching
-    return True
+    return 'spun'
 
 ## websockets
 from flask_socketio import SocketIO
@@ -72,6 +78,9 @@ def background_thread():
     while True:
         socketio.sleep(1)
         db.session.expire_all() # BUGFIX for first entry not refreshing its created_on
+        ## TODO: deal with thread db session management better, see:
+        ##       http://docs.sqlalchemy.org/en/latest/orm/contextual.html
+        ##       http://docs.sqlalchemy.org/en/latest/orm/session_basics.html#session-faq-whentocreate
         toptimes = []
         players = Player.query.all()
         for p in players:
@@ -259,7 +268,7 @@ def exitplayer():
 def spin():
     spinerror = False
     if request.method == 'POST':
-        spinerror = not spinthewheel()
+        spinerror = spinthewheel()
 
     spins = Spin.query.order_by('id').all()
     history = []

@@ -177,6 +177,11 @@ class Spin(Base):
             return 'results'
         return 'leaderboard'
 
+    def too_recent(self):
+        if self.created_on + timedelta(seconds=60) > datetime.utcnow():
+            return True
+        return False
+
 class Config(Base):
     """ Current config options. """
     __tablename__ = 'config'
