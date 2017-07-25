@@ -35,6 +35,22 @@
         <a href="/leader" target="_blank" style="text-decoration:underline;">[ pop out the Leaderboard ]</a>
     </div>
 </div>
+<br>
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3" style="text-align:center;">
+        obey grace times:
+        {% if obeygrace %}
+            <a href="/ignore-grace">
+                <span class="glyphicon glyphicon-check" style="color:#d22"></span>
+            </a>
+        {% else %}
+            <a href="/obey-grace">
+                <span class="glyphicon glyphicon-unchecked" style="color:#d22"></span>
+            </a>
+        {% endif %}
+    </div>
+
+</div>
 <hr>
 <div class="row">
     <div class="col-sm-10 col-sm-offset-1">

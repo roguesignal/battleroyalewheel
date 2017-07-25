@@ -16,6 +16,7 @@ from models import Entry
 from models import Game
 from models import Spin
 from models import utcnow
+from models import Config
 
 import random
 from datetime import datetime
@@ -105,7 +106,6 @@ def background_thread():
             for sp in latest_spin.spin_players():
                 spin_players += '<div class="col-sm-2">' + sp[0] + '<br><span style="color:#AAA">[' + sp[1] + ']</span></div>'
             spin_players += '</div>'
-            #spin_players = " | ".join(latest_spin.spin_players())
             if latest_spin:
                 spin_state = latest_spin.spin_state()
             else:
@@ -273,8 +273,11 @@ def spin():
     if not spins:
         history.append({'game': 'none', 'collars': ['N/A']})
 
+    config = Config.get_config()
+    obeygrace = config.obey_grace
+
     history = history[::-1]
-    return render_template('spin.html', history=history, spinerror=spinerror)
+    return render_template('spin.html', history=history, spinerror=spinerror, obeygrace=obeygrace)
 
 @app.route('/players', methods=['GET'])
 def players():
@@ -357,6 +360,7 @@ def reset_players():
         for e in all_entries:
             e.created_on = t
         db.session.commit()
+        # TODO: handle inactive entries
     elif 'reset_players' in request.form:
         Spin.query.delete()
         Entry.query.delete()
@@ -368,6 +372,20 @@ def reset_players():
     else:
         app.logger.info.warn('called reset without proper button')
     return redirect('/config')
+
+@app.route('/ignore-grace', methods=['GET'])
+def ignore_grace():
+    config = Config.get_config()
+    config.obey_grace = False
+    db.session.commit()
+    return redirect('/spin')
+
+@app.route('/obey-grace', methods=['GET'])
+def obey_grace():
+    config = Config.get_config()
+    config.obey_grace = True 
+    db.session.commit()
+    return redirect('/spin')
 
 import os
 

@@ -105,10 +105,12 @@ class Entry(Base):
     @classmethod
     def available_entries(cls):
         """ return all active Entries that are out of grace period """
+        """ checks if Config is obeying grace periods or not """
         active_entries = Entry.query.filter(Entry.active == True)
         victims = []
+        obey_grace = Config.get_config().obey_grace
         for ae in active_entries:
-            if ae.grace_until < datetime.utcnow():
+            if not obey_grace or ae.grace_until < datetime.utcnow():
                 victims.append(ae)
         return victims
 
@@ -183,5 +185,18 @@ class Config(Base):
 
     def __init__(self):
         self.obey_grace = True
+
+    @classmethod
+    def get_config(cls):
+        config_l = Config.query.all()
+        if len(config_l) == 0:
+            config = Config()
+            db.session.add(config)
+            db.session.commit()
+        else:
+            config = config_l[0]
+
+        return config
+
 
 
