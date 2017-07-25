@@ -175,4 +175,13 @@ class Spin(Base):
             return 'results'
         return 'leaderboard'
 
+class Config(Base):
+    """ Current config options. """
+    __tablename__ = 'config'
+
+    obey_grace = db.Column(db.Boolean())
+
+    def __init__(self):
+        self.obey_grace = True
+
 
