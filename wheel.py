@@ -71,7 +71,7 @@ def background_thread():
 
     while True:
         socketio.sleep(1)
-
+        db.session.expire_all() # BUGFIX for first entry not refreshing its created_on
         toptimes = []
         players = Player.query.all()
         for p in players:
@@ -85,7 +85,7 @@ def background_thread():
                 else:
                     elapsed_time += (e.exit_time - e.created_on) # bad timezones
             toptimes.append({'name': p.name, 'time': elapsed_time, 'dead': dead})
-        
+       
         # order toptimes by elapsed_time
         toptimes = sorted(toptimes, key=lambda k: k['time'], reverse=True)
         toptimes = [{'name': t['name'], 'time': hhmmss(t['time'].seconds), 'dead': t['dead']} for t in toptimes]
@@ -124,6 +124,7 @@ def background_thread():
         first_entry = Entry.query.order_by('id').first()
         if first_entry:
             game_elapsed = hhmmss((datetime.utcnow() - first_entry.created_on).seconds)
+            # TODO might be broken in some reset situations
         else:
             game_elapsed = 'NO ENTRANTS YET'
 
@@ -355,12 +356,17 @@ def leaderboard():
 @app.route('/reset', methods=['POST'])
 def reset_players():
     if 'reset_entries' in request.form:
-        all_entries = Entry.query.all()
-        t = utcnow()
-        for e in all_entries:
-            e.created_on = t
+        active_entries = Entry.query.filter(Entry.active == True)
+        t = datetime.utcnow()
+        for ae in active_entries:
+            ae.created_on = t
         db.session.commit()
-        # TODO: handle inactive entries
+        db.session.flush()
+
+        ## TODO: for some reason this is not resetting the very first one
+        ##       worked around it with an expire_all up in the socket thread
+
+        ## TODO: handle inactive entries better
     elif 'reset_players' in request.form:
         Spin.query.delete()
         Entry.query.delete()
